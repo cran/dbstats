@@ -6,7 +6,8 @@
 print.summary.dbglm <-function (x, digits = 2, ...){
 
     # print the call
-    cat("\nCall:  ", paste(deparse(x$call), sep = "\n", collapse = "\n"),
+   x$call[[1]]<-as.name("dbglm")
+   cat("\nCall:  ", paste(deparse(x$call), sep = "\n", collapse = "\n"),
         "\n", sep = "")
 
     # Deviance Residuals
@@ -27,11 +28,15 @@ print.summary.dbglm <-function (x, digits = 2, ...){
     cat(gettextf("\nResidual deviance: %s  on %i degrees of freedom",
           format(round(x$deviance,digits=digits)),x$df.residual))
     
-    # AIC
-    cat(paste("\nAIC:",format(round(x$aic,digits)),sep=" "),"\n")
-
+    
     # Number of Fisher Scoring iterations and Convergence criterio
-    cat(gettextf("\nNumber of Fisher Scoring iterations: %i",x$iter),"\n")
+    cat(gettextf("\n\nNumber of Fisher Scoring iterations: %i",x$iter),"\n")
     cat(gettextf("Convergence criterion: %s",x$convcrit),"\n\n")
-}
+ 
+   # AIC
+   cat("AIC:\t   ", format(round(x$aic, digits)), "\n")
+   cat("BIC:\t   ", format(round(x$bic, digits)), "\n")
+   cat("GCV:\t   ", format(round(x$gcv, digits)),"\n\n")
+ 
+ }
 

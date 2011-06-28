@@ -16,7 +16,7 @@
  ##
 
 
-plot.dbplsr<-function(x,which=c(1L:4L),main="",scores_comps=1:2,component=1,               
+plot.dbplsr<-function(x,which=c(1L:4L),main="",scores.comps=1:2,component=1,               
               method=c("OCV","GCV","AIC","BIC"),...){
 
      # stop if the object is not a dblm object.
@@ -45,13 +45,13 @@ plot.dbplsr<-function(x,which=c(1L:4L),main="",scores_comps=1:2,component=1,
      if(show[1L]){
        if ((main==""&&length(which)==1)||length(which)>1)
         main<-"Score plot"
-       plot(as.data.frame(x$fk)[,scores_comps],main=main)
+       plot(as.data.frame(x$fk)[,scores.comps],main=main)
      }
      
      # pairs between y and components scores  
      if(show[2L]){
        if ((main==""&&length(which)==1)||length(which)>1)
-        main<-paste("response vs score",component)
+        main<-paste("Response vs score",component)
        xlab=paste("score ",component)
        ylab="response"     
        y<-x$y

@@ -13,7 +13,7 @@
 }
 
 \usage{
-\method{plot}{dbplsr}(x,which=c(1L:4L),main="",scores_comps=1:2,
+\method{plot}{dbplsr}(x,which=c(1L:4L),main="",scores.comps=1:2,
         component=1,method=c("OCV","GCV","AIC","BIC"),...)
 }
 
@@ -27,7 +27,7 @@
   \item{main}{
     an overall title for the plot. Only if one of the four plots is selected.
 }
- \item{scores_comps}{
+ \item{scores.comps}{
     array containing the component scores crossed in the first plot 
   (default the first two).
 }
@@ -82,7 +82,7 @@ library(pls)
 data(yarn)
 ## Default methods:
 yarn.dbplsr <- dbplsr(density ~ NIR, data = yarn, ncomp=6, method="GCV")
-plot(yarn.dbplsr,scores_comps=1:3)
+plot(yarn.dbplsr,scores.comps=1:3)
 
 }
 

@@ -65,9 +65,14 @@ summary.ldblm <-function(object,...){
     # list to be returned
     ans <- list(nobs=nobs,r.squared=R2,trace.hat=t_hat,call=call,
                   residuals=z$residuals,family=family,y=z$y,
-                  kind.kernel=kind.kernel,method=attr(object,"method"),
-                  h_opt=object$h_opt, crit.value=crit.value)
-    class(ans)<-"summary.ldblm"
+                  kind.kernel=kind.kernel,method.h=attr(object,"method.h"),
+                  h.opt=object$h.opt, crit.value=crit.value)
+    
+    if (inherits(object, "ldbglm"))
+      class(ans)<-c("summary.ldbglm","summary.ldblm")
+    else
+      class(ans)<-"summary.ldblm"
+    
 
     return(ans)
 }

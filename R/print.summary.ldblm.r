@@ -10,6 +10,11 @@ print.summary.ldblm <-function(x,...){
  
  # print the call 
  cat("\ncall:   ")
+ if (class(x)[1] == "summary.ldblm")
+    x$call[[1]]<-as.name("ldblm")
+ else
+    x$call[[1]]<-as.name("ldbglm")
+    
  print(x$call)
 
  # print the Residuals
@@ -23,7 +28,7 @@ print.summary.ldblm <-function(x,...){
  cat(gettextf("\nR-squared : %s",format(round(x$r.squared,digits=4))))
  
  # print the Trace of smoother matrix
- cat(gettextf("\nTrace of smoother matrix: %s",format(round(x$trace.hat,2)))) 
+ cat(gettextf("\nTrace of smoothing matrix: %s",format(round(x$trace.hat,2)))) 
  
  # print the family
  if (!is.character(x$family))
@@ -31,19 +36,19 @@ print.summary.ldblm <-function(x,...){
  else
   cat("\nfamily: gaussian\n")
 
- # print the using method
+ # print the using 
   cat(gettextf("\nkind of kernel= %s",x$kind.kernel),"\n")  
   
   
   # print the used bandwidth 
-  if (x$method!="user_h")
-   cat(gettextf("optimal bandwidth h : %f",x$h_opt),"\n") # print h_opt  
+  if (x$method.h!="user.h")
+   cat(gettextf("optimal bandwidth h : %f",x$h.opt),"\n") # print h.opt  
   else 
-   cat(gettextf("user bandwidth h : %f",x$h_opt),"\n") # print h_opt  
+   cat(gettextf("user bandwidth h : %f",x$h.opt),"\n") # print h.opt  
   
-    # print the appropriate statistic according to the using method 
+    # print the appropriate statistic according to the using method.h 
     if(!is.null(x$crit.value))
-      cat(paste(x$method, "value criterion :", format(x$crit.value,scientific=TRUE)),"\n")
+      cat(paste(x$method.h, "value criterion :", format(x$crit.value,scientific=TRUE)),"\n")
    cat("\n")
   
 }

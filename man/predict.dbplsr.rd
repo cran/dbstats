@@ -14,7 +14,7 @@
  products matrix G.
 }
 \usage{
-\method{predict}{dbplsr}(object,newdata,type="Z",...)
+\method{predict}{dbplsr}(object,newdata,type.var="Z",...)
 }
                              
 \arguments{
@@ -22,15 +22,11 @@
    an object of class \code{dbplsr}. Result of \code{\link{dbplsr}}.
  }
  \item{newdata}{
-      data.frame or matrix which contains the values of Z (if \code{type_var="Z"} 
-   and \code{dbplsr} has been called by \code{\link{dbplsr.formula}} format). 
-   The squared distances between k new individuals and the original n 
-   individuals (only if \code{type_var="D2"} and \code{dbplsr} has been called 
-   by \code{\link{dbplsr.dist}} or \code{\link{dbplsr.D2}} format). 
-   Finally, the G inner products matrix (if \code{type_var="G" } and \code{dbplsr}
-   has been called by \code{\link{dbplsr.Gram}} format).
+ data.frame or matrix which contains the values of Z (if \code{type.var="Z"}. 
+The squared distances between k new individuals and the original n individuals (only if \code{type.var="D2"}). 
+Finally, the G inner products matrix (if \code{type.var="G"}).
 }
-  \item{type}{
+  \item{type.var}{
      set de type of newdata. Can be \code{"Z"} if newdata 
    contains the values of the explanatory variables, \code{"D2"} if 
    contains the squared distances matrix or \code{"G"} if contains the 
@@ -46,8 +42,8 @@
 }
 
 \note{
-  Look at which way (or \code{type}) was made the \code{dbplsr} call. 
- The parameter \code{type} must be consistent with the data type that is 
+  Look at which way (or \code{type.var}) was made the \code{dbplsr} call. 
+ The parameter \code{type.var} must be consistent with the data type that is 
  introduced to \code{dbplsr}.     
 }
                    

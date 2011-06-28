@@ -14,7 +14,7 @@
  
 \usage{                                  
 \method{predict}{ldblm}(object,newdata1,newdata2=newdata1,
-        new.k.knn=3,type="Z",...)
+        new.k.knn=3,type.var="Z",...)
 }
 
 \arguments{
@@ -22,14 +22,9 @@
    an object of class \code{ldblm}. Result of \code{\link{ldblm}}.
  }
  \item{newdata1}{
-       data.frame or matrix which contains the values of Z 
-    (if \code{type_var="Z"} and \code{ldblm} has been called by 
-    \code{\link{ldblm.formula}} format), the squared distances between 
-    k new individuals and the original n individuals (only if \code{type="D2"}
-    and \code{ldblm} has been called by \code{\link{ldblm.dist}} format), 
-    and the G inner products matrix (if \code{type="G"}  and 
-    \code{ldblm} has been called by \code{\link{ldblm.Gram}} format).
-    \code{newdata1} is used to compute kernels and local weights.
+ data.frame or matrix which contains the values of Z (if \code{type.var="Z"}. 
+The squared distances between k new individuals and the original n individuals (only if \code{type.var="D2"}). 
+Finally, the G inner products matrix (if \code{type.var="G"}). \code{newdata1} is used to compute kernels and local weights.
  }
   \item{newdata2}{
       the same logic as \code{newdata1}.
@@ -42,7 +37,7 @@
    If \code{new.h.knn=NULL}, takes the distance that includes the 3 nearest
    neighbors for each new individual row. 
  }
-  \item{type}{
+  \item{type.var}{
      set de type of the newdata paramater. Can be \code{"Z"} if newdata
    contains the values of the explanatory variables, \code{"D2"} if contains 
    the squared distances matrix or \code{"G"} if contains the inner 
@@ -59,8 +54,8 @@
   \item{newS }{matrix (with dimension (k,n)) of weights used to compute the predictions.} 
 }
 \note{
-    Look at which way (or \code{type}) was made the \code{ldblm} call. 
-    The parameter \code{type} must be consistent with the data type that 
+    Look at which way (or \code{type.var}) was made the \code{ldblm} call. 
+    The parameter \code{type.var} must be consistent with the data type that 
     is introduced to \code{ldblm}.    
 }
 
@@ -107,13 +102,13 @@ e <- rnorm(n)*s
 
 y <- Z\%*\%b1 + Z^2\%*\%b2 +Z^3\%*\%b3 + e
 
-D<-as.matrix(dist(Z))
-D2<-D^2
+D <- as.matrix(dist(Z))
+D2 <- D^2
 
-newdata1<-0
+newdata1 <- 0
 
-ldblm1<-ldblm(y~Z,kind.of.kernel=1,method="GCV",noh=3,k.knn=3)
-pr1<-predict(ldblm1,newdata1)
+ldblm1 <- ldblm(y~Z,kind.of.kernel=1,method="GCV",noh=3,k.knn=3)
+pr1 <- predict(ldblm1,newdata1)
 print(pr1)
 plot(Z,y)
 points(0,pr1$fit,col=2)

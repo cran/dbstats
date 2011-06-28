@@ -21,6 +21,7 @@ print.dbplsr<-function(x,...){
 
   # the call
   cat("\ncall:   ")
+  x$call[[1]]<-as.name("dbplsr")
   print(x$call)
 
   # the using method
@@ -32,19 +33,19 @@ print.dbplsr<-function(x,...){
   
   if(x$method!="ncomp"){
     cat(gettextf("\noptimal number of components using method %s: ",x$method," "))
-    cat(x$ncomp_opt)
+    cat(x$ncomp.opt)
   }
     
   # print the appropriate statistic according to the using method
    switch(x$method,
 	  "OCV"= cat(gettextf("\noptimal Ordinary cross-validation : %s ",
-              format(x$ocv[x$ncomp_opt],scientific=TRUE)),"\n"),
+              format(x$ocv[x$ncomp.opt],scientific=TRUE)),"\n"),
     "GCV"=cat(gettextf("\noptimal Generalized cross-validation : %s ",
-              format(x$gcv[x$ncomp_opt],scientific=TRUE)),"\n"),
+              format(x$gcv[x$ncomp.opt],scientific=TRUE)),"\n"),
 		"AIC"=cat(gettextf("\noptimal Akaike Information Criterion : %s ",
-              format(x$aic[x$ncomp_opt],scientific=TRUE)),"\n"),
+              format(x$aic[x$ncomp.opt],scientific=TRUE)),"\n"),
 		"BIC"= cat(gettextf("\noptimal Bayesian Information Criterion : %s ",
-              format(x$bic[x$ncomp_opt],scientific=TRUE)),"\n")
+              format(x$bic[x$ncomp.opt],scientific=TRUE)),"\n")
   )
 
  cat("\n")

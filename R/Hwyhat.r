@@ -45,7 +45,7 @@
     ocv<-  sum(weights*((y-yhat)/(1-diag(Hw)))^2)
       
     # calculing the generalized cross-validation estimator
-    gcv<-sum(weights*(yhat-y)^2)/(n*(1-mean(diag(Hw)))^2)
+    gcv <-sum(weights*(yhat-y)^2)/((1-mean(diag(Hw)))^2)  
     
     # Return a list with the fitted values, the effective rank, the inverse of 
     # Fw, the hat matrix, the ocv and gcv estimators, the residual standard 

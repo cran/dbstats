@@ -10,7 +10,9 @@
 print.dbglm<-function (x, digits = max(3, getOption("digits") - 3), ...)
 {
    # print the call
-   cat("\nCall:  ", paste(deparse(attr(x,"call")), sep = "\n", collapse = "\n"),
+   x$call[[1]]<-as.name("dbglm")
+   
+   cat("\nCall:  ", paste(deparse(x$call), sep = "\n", collapse = "\n"),
         "\n", sep = "")
 
    # print the family and the metric (if is used)
@@ -25,7 +27,11 @@ print.dbglm<-function (x, digits = max(3, getOption("digits") - 3), ...)
    # Deviance
    cat("Null Deviance:\t   ", format(signif(x$null.deviance,
         digits)), "\nResidual Deviance:", format(signif(x$deviance,
-        digits)), "\tAIC:", format(signif(x$aic, digits)), "\n\n") 
+        digits)), "\n\n") 
+  
+   cat("AIC:\t   ", format(round(x$aic.model, digits)), "\n")
+   cat("BIC:\t   ", format(round(x$bic.model, digits)), "\n")
+   cat("GCV:\t   ", format(round(x$gcv.model, digits)),"\n\n")
   
     invisible(x)
    

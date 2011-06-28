@@ -19,11 +19,16 @@ control_method<-function(method,class_call){
     m <- c("OCV", "GCV", "AIC", "eff.rank", "BIC",
         "rel.gvar")   
   }
+
+  if (class_call=="dbglm"){
+    m <- c("GCV", "AIC", "eff.rank", "BIC",
+        "rel.gvar")   
+  }
  
   # prospective methods for class ldblm or ldbglm
   if (class_call=="ldblm"||class_call=="ldbglm"){
     m <- c("OCV", "GCV", "AIC", "eff.rank", "BIC",
-         "user_h")
+         "user.h")
   }
 
   # prospective methods for class dbpls
@@ -34,10 +39,14 @@ control_method<-function(method,class_call){
   # if character parameter: "method" contains only part of the word, finish
   # filling the word, in accordance with the methods m.
   methodaux <- m[pmatch(method[1],m)]
-  if (is.na(methodaux)){
+  if (is.na(methodaux) & class_call!="dbglm"){
     warning(gettextf("the method %s is not defined. Will apply the default method 'OCV'",method))
     method<-"OCV"
-  }else
+  }
+   if (is.na(methodaux)&&class_call =="dbglm"){
+    warning(gettextf("the method %s is not defined. Will apply the default method 'GCV'",method))
+    method<-"GCV"
+  }  else
     method<-methodaux
   
   return(method)

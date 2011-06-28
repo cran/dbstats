@@ -12,14 +12,13 @@
  \code{sqrt(|residuals|)} against fitted values. A plot of Cook's distances 
  versus row labels, a plot of residuals against leverages, and the optimal 
  effective rank of \code{"OCV"}, \code{"GCV"}, \code{"AIC"} or \code{"BIC"} 
- method (only if the object \code{x} is a \code{dblm} object and 
- one of these four methods have been chosen in function \code{dblm}). 
+ method (only if one of these four methods have been chosen in function \code{dblm}). 
  By default, only the first three and \code{5} are provided.    
 }
 \usage{
 \method{plot}{dblm}(x,which=c(1:3, 5),id.n=3,main="",
         cook.levels = c(0.5, 1),cex.id = 0.75,
-        type_glm=c("link","response"),...)
+        type.pred=c("link","response"),...)
 }
 
 \arguments{
@@ -41,7 +40,7 @@
   \item{cex.id}{
     magnification of point labels.
 }
-  \item{type_glm}{
+  \item{type.pred}{
       the type of prediction (required only for a \code{dbglm} class object). 
     Like \code{\link{predict.dbglm}}, the default \code{"link"} is on the scale
     of the linear predictors; the alternative \code{"response"} is on the scale 
@@ -64,10 +63,10 @@
   Finally, the Residual-Leverage plot also shows the most influence points 
   (labelled by Cook's distance). See \code{\link{cooks.distance}}.
   
-     The last plot, allows to view the \code{"OCV"}, \code{"GCV"}, \code{"AIC"}
+     The last plot, allows to view the \code{"OCV"} (just for \code{dblm}), \code{"GCV"}, \code{"AIC"}
   or \code{"BIC"} criterion according to the used rank in the 
-  \code{\link{dblm}} function, and chosen the minimum. Applies only if 
-  the parameter \code{full_search} in \code{dblm} its \code{TRUE}.
+  \code{\link{dblm}} or \code{\link{dbglm}} functions, and chosen the minimum. Applies only if 
+  the parameter \code{full.search} its \code{TRUE}.
 }
 
 \references{
@@ -110,7 +109,7 @@ s <- 1
 e <- rnorm(n)*s
 y <- Z\%*\%b + e
 
-dblm1<-dblm(y~Z,metric="gower",method="OCV")
+dblm1 <- dblm(y~Z,metric="gower",method="GCV", full.search=FALSE)
 plot(dblm1)
 plot(dblm1,which=4)
 

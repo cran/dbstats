@@ -60,7 +60,7 @@
 }
   \item{D2}{
       a \code{D2} class object. Squared distances matrix between individuals.  
-	  See details below to learn the usage of \code{dblm.D2}.
+
 }
   \item{G}{
       a \code{Gram} class object. Weighted centered inner products matrix of the 
@@ -122,7 +122,7 @@
   \item{bk }{regression coefficients. \code{fitted.values = fk*bk} }
   \item{Pk }{orthogonal projector on the one-dimensional linear space by \code{fk}.} 
   \item{ncomp }{number of components included in the model.}  
-  \item{ncomp_opt }{optimum number of components according to the selected method.}  
+  \item{ncomp.opt }{optimum number of components according to the selected method.}  
   \item{weights }{the specified weights.}
   \item{method }{the using method.} 
   \item{y }{the response used to fit the model.}

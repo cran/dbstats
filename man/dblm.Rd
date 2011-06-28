@@ -27,16 +27,16 @@
   }
 \usage{
 
-\method{dblm}{formula}(formula,data,...,metric="euclidean",method="OCV",
-        full_search=FALSE,weights,rel.gvar=0.95,eff.rank)
-
-\method{dblm}{dist}(distance,y,...,method="OCV",full_search=FALSE,
+\method{dblm}{formula}(formula,data,...,metric="euclidean",method="OCV",full.search=TRUE,
         weights,rel.gvar=0.95,eff.rank)
 
-\method{dblm}{D2}(D2,y,...,method="OCV",full_search=FALSE,weights,rel.gvar=0.95,
+\method{dblm}{dist}(distance,y,...,method="OCV",full.search=TRUE,
+        weights,rel.gvar=0.95,eff.rank)
+
+\method{dblm}{D2}(D2,y,...,method="OCV",full.search=TRUE,weights,rel.gvar=0.95,
         eff.rank)
               
-\method{dblm}{Gram}(G,y,...,method="OCV",full_search=FALSE,weights,rel.gvar=0.95,
+\method{dblm}{Gram}(G,y,...,method="OCV",full.search=TRUE,weights,rel.gvar=0.95,
         eff.rank)
 }
 
@@ -63,12 +63,12 @@
 }
   \item{D2}{
       a \code{D2} class object. Squared distances matrix between individuals.  
-	  See details below to learn the usage of \code{dblm.D2}.
+
 }
   \item{G}{
       a \code{Gram} class object. Doubly centered inner product matrix  of the 
     squared distances matrix \code{D2}. 
-	  See details below to learn the usage of \code{dblm.Gram}.
+
 }
   \item{metric}{
       metric function to be used when computing distances from observed 
@@ -89,7 +89,7 @@
 	  respectively, the Akaike or Bayesian Information Criterion 
 	  (see \code{\link{AIC}} for more details). 
 	  The optimizacion procedure to be used in the above four methods
-	  can be set with the \code{full_search} optional parameter.
+	  can be set with the \code{full.search} optional parameter.
 	  
 	  When method is \code{eff.rank}, the effective rank is explicitly
 	  set by the user through the \code{eff.rank} optional parameter 
@@ -100,18 +100,18 @@
 	  set by the user through the \code{rel.gvar} optional parameter which, 
 	  in this case,  becomes mandatory.
 }
-  \item{full_search}{sets which optimization procedure will be used to
-	minimize the modelling criterion specified in \code{method}.
-    Needs to be specified only if \code{method} is \code{"AIC"}, 
-	\code{"BIC"}, \code{"OCV"} or \code{"GCV"}. 
-    If \code{full_search=TRUE}, \emph{effective rank} is set to its
-	global best value, after evaluating the criterion for all possible ranks.
-	Potentially too computationally expensive.
-    If \code{full_search=FALSE}, the \code{\link{optimize}} function 
-	is called. Then computation time is shorter, but the result may be 
-	found a local minimum. 
-      
-}  
+    \item{full.search}{sets which optimization procedure will be used to
+  	minimize the modelling criterion specified in \code{method}.
+      Needs to be specified only if \code{method} is \code{"AIC"}, 
+  	\code{"BIC"}, \code{"OCV"} or \code{"GCV"}. 
+      If \code{full.search=TRUE}, \emph{effective rank} is set to its
+  	global best value, after evaluating the criterion for all possible ranks.
+  	Potentially too computationally expensive.
+      If \code{full.search=FALSE}, the \code{\link{optimize}} function 
+  	is called. Then computation time is shorter, but the result may be 
+  	found a local minimum. 
+        
+  }  
   \item{weights}{
      an optional numeric vector of weights to be used in the fitting process. 
 	 By default all individuals have the same weight.  
@@ -230,7 +230,7 @@ y <- Z\%*\%b + e
 
 D<-dist(Z)
 
-dblm1<-dblm.dist(D,y)
+dblm1 <- dblm(D,y)
 lm1 <- lm(y~Z)
 # the same fitted values with the lm
 mean(lm1$fitted.values-dblm1$fitted.values)

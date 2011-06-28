@@ -36,10 +36,10 @@
   \item{residuals }{ the residuals (the response minus fitted values).}
   \item{family }{ the \code{\link{family}} object used.}
   \item{kind.kernel }{ smoothing kernel function.}
-  \item{method }{ method used to decide the optimal bandwidth. }
-  \item{h_opt }{the optimal bandwidth h used in the fitting proces 
-      (\code{if method!=user_h}).} 
-  \item{crit.value }{ value of criterion defined in \code{method}.}
+  \item{method.h }{ method used to decide the optimal bandwidth. }
+  \item{h.opt }{the optimal bandwidth h used in the fitting proces 
+      (\code{if method.h!=user.h}).} 
+  \item{crit.value }{ value of criterion defined in \code{method.h}.}
 
  
 }

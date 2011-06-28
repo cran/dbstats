@@ -35,11 +35,16 @@ print.ldblm<-function(x,...){
 		 
   # print the call
   cat("\ncall:   ")
+   if (class(x)[1] == "ldblm")
+    x$call[[1]]<-as.name("ldblm")
+   else
+    x$call[[1]]<-as.name("ldbglm")
+  
   print(x$call)		
   
   # print the using method
-  cat(gettextf("\nmethod= %s, \t kind of kernel= %s",
-          attr(x,"method"),kindkernel),"\n")  
+  cat(gettextf("\nmethod.h= %s, \t kind of kernel= %s",
+          attr(x,"method.h"),kindkernel),"\n")  
   
   # metric
   if(attr(x,"way")=="Z"){
@@ -48,10 +53,10 @@ print.ldblm<-function(x,...){
   }
   
   # print the used bandwidth 
-  if (attr(x,"method")!="user_h")
-   cat(gettextf("optimal bandwidth h : %f",x$h_opt),"\n") # print h_opt  
+  if (attr(x,"method.h")!="user.h")
+   cat(gettextf("optimal bandwidth h : %f",x$h.opt),"\n") # print h.opt  
   else 
-   cat(gettextf("user bandwidth h : %f",x$h_opt),"\n") # print h_opt  
+   cat(gettextf("user bandwidth h : %f",x$h.opt),"\n") # print h.opt  
  
   # print the appropriate statistic according to the using method 
   if (!is.null(attr(x,"OCV_opt")))

@@ -11,8 +11,8 @@
  }
  
 \usage{
-\method{predict}{dbglm}(object,newdata,type=c("link", "response"),
-        type_var="Z",...)
+\method{predict}{dbglm}(object,newdata,type.pred=c("link", "response"),
+        type.var="Z",...)
 }
 
 \arguments{
@@ -20,20 +20,17 @@
    an object of class \code{dbglm}. Result of \code{\link{dbglm}}.
  }
   \item{newdata}{
-     data.frame or matrix which contains the values of Z (if \code{type_var="Z"} 
-   and \code{dbglm} has been called by \code{\link{dbglm.formula}} format). 
-   The squared distances between k new individuals and the original n 
-   individuals (only if \code{type_var="D2"} and \code{dbglm} has been called 
-   by \code{\link{dbglm.dist}} or \code{\link{dbglm.D2}} format). 
-   Finally, the G inner products matrix (if \code{type_var="G" } and \code{dbglm}
-   has been called by \code{\link{dbglm.Gram}} format).
+ data.frame or matrix which contains the values of Z (if \code{type.var="Z"}. 
+The squared distances between k new individuals and the original n individuals (only if \code{type.var="D2"}). 
+Finally, the G inner products matrix (if \code{type.var="G"}).
+
  }
-  \item{type}{
+  \item{type.pred}{
      the type of prediction (required). The default \code{"link"} is on the scale 
    of the linear predictors; the alternative \code{"response"} is on the scale 
    of the response variable. 
  }
-  \item{type_var}{
+  \item{type.var}{
      set de type of newdata. Can be \code{"Z"} if newdata 
    contains the values of the explanatory variables, \code{"D2"} if 
    contains the squared distances matrix or \code{"G"} if contains the 
@@ -46,7 +43,7 @@
 
 \details{
     The predicted values may be the expected mean values of response for the new 
- data (\code{type="response"}), or the linear predictors evaluated in the 
+ data (\code{type.pred="response"}), or the linear predictors evaluated in the 
  estimated \code{dblm} of the last iteration.
  
     In classical linear models the mean and the linear predictor are the same 
@@ -61,8 +58,8 @@
 }
 
 \note{
-    Look at which way (or \code{type_var}) was made the dbglm call.
-  The parameter \code{type_var} must be consistent with the data type 
+    Look at which way (or \code{type.var}) was made the dbglm call.
+  The parameter \code{type.var} must be consistent with the data type 
   that is introduced to \code{dbglm}.    
 }
 
@@ -95,12 +92,12 @@ Delicado, Pedro <pedro.delicado@upc.edu> and Fortiana, Josep <fortiana@ub.edu>
 
 z <- rnorm(100)
 y <- rpois(100, exp(1+z))
-glm1<-glm(y ~z, family=quasi("identity"))
-dbglm1<-dbglm(y~z,family=quasi("identity"))
+glm1 <- glm(y ~z, family=quasi("identity"))
+dbglm1 <- dbglm(y~z,family=quasi("identity"), method="rel.gvar")
 
 newdata<-0
 
-pr1<-predict(dbglm1,newdata,type="response",type_var="Z")
+pr1 <- predict(dbglm1,newdata,type.pred="response",type.var="Z")
 print(pr1)
 plot(z,y)
 points(z,dbglm1$fitt,col=2)

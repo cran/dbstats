@@ -17,7 +17,7 @@
         
 
 plot.dblm<-function(x,which=c(1L:3L, 5L),id.n=3,main="",cook.levels = c(0.5, 1),
-              cex.id = 0.75,type_glm=c("link","response"),...){
+              cex.id = 0.75,type.pred=c("link","response"),...){
                           
      # stop if the object is not a dblm object.
      if (!inherits(x, "dblm")&&!inherits(x, "dbglm")) 
@@ -44,6 +44,7 @@ plot.dblm<-function(x,which=c(1L:3L, 5L),id.n=3,main="",cook.levels = c(0.5, 1),
      # parameters shared by all graphics: 
      iid <- 1L:id.n       # vector 1:(number of observations to hightlihgt)  
     
+      
      # residual values
      if (inherits(x, "dblm")) 
       r<- x$residuals      
@@ -54,8 +55,8 @@ plot.dblm<-function(x,which=c(1L:3L, 5L),id.n=3,main="",cook.levels = c(0.5, 1),
      if (inherits(x, "dblm"))
       yh<- x$fitted.values
      if (inherits(x, "dbglm")){
-      type_glm <- match.arg(type_glm)
-      if (type_glm=="response")
+      type.pred <- match.arg(type.pred)
+      if (type.pred=="response")
         yh <- x$fitted.values
       else 
         yh <- attr(x,"eta")
@@ -251,28 +252,40 @@ plot.dblm<-function(x,which=c(1L:3L, 5L),id.n=3,main="",cook.levels = c(0.5, 1),
        
     # "rank effective against ocv, gcv, aic or bic estimator"  
      if(show[6L]){
-      if (inherits(x,"dbglm")) stop("this plot is not provided for a dbglm object")
-      if (!attr(x,"full_search"))  stop("this plot is not provided for a dblm without 'full_search=TRUE'")
+    
+        # range.eff.rank
+        if (inherits(x, "dbglm"))
+         range.eff.rank <-  c(attr(x,"range.eff.rank")[1]:attr(x,"range.eff.rank")[2])
+        else{
+         if (inherits(x, "dblm")) 
+          range.eff.rank <-  1: attr(x,"threshold")    
+         }      
+
+      #if (inherits(x,"dbglm")) stop("this plot is not provided for a dbglm object")
+      if (!attr(x,"full.search"))  stop("this plot is not provided for a dblm without 'full.search=TRUE'")
       else{
        method<-attr(x,"method")
        # if the user method is eff.rank or epsilonis not posible to makes this plot.
        if (method=="eff.rank"||method=="epsilon"){  
             warning("the effective rank election plot can only be done, if the object dblm has been called with the parameter method different that 'eff.rank' or 'epsilon'")
        }else{
+        
         if (method=="OCV"){
          ocvs<-attr(x,"ocvs")
          # red for the selected eff.rank
-         color<-c(rep("black",(x$eff.rank-1)),"red",rep("black",(length(ocvs)-x$eff.rank))) 
+         color<-c(rep("black",(x$eff.rank-1)),"red",rep("black",(length(ocvs)-x$eff.rank)))[range.eff.rank]
+         ocvs <-  ocvs[range.eff.rank]
          
         if ((main==""&&length(which)==1)||length(which)>1)
-          main="effective rank of OCV method"
-         ylim<-c(0,max(ocvs))
+          main="OCV vs Effective rank"
+        
+        ylim<-c(0,max(ocvs))
          
          if (id.n > 0) 
            # extended the range of y if id.n > 0
            ylim <- extendrange(r = ylim, f = 0.08) 
          # plot with the optimal effective rank of OCV method   
-         plot(ocvs, type="h",ylim = ylim, main = main,col=color,
+         plot(range.eff.rank, ocvs, type="h",ylim = ylim, main = main,col=color,
             xlab = "effective rank", ylab = "Ordinary Cross-validation")
          # identify the selected eff.rank   
          text(x$eff.rank,pos=3,col="red",cex=0.7,x$ocv,x$eff.rank)           
@@ -280,10 +293,12 @@ plot.dblm<-function(x,which=c(1L:3L, 5L),id.n=3,main="",cook.levels = c(0.5, 1),
        
         if (method=="GCV"){
          gcvs<-attr(x,"gcvs")
-         color<-c(rep("black",(x$eff.rank-1)),"red",rep("black",(length(gcvs)-x$eff.rank)))
+         color <-c(rep("black",(x$eff.rank-1)),"red",rep("black",(length(gcvs)-x$eff.rank)))[range.eff.rank]
+         gcvs <-  gcvs[range.eff.rank]
+          
          
         if ((main==""&&length(which)==1)||length(which)>1)
-          main="effective rank of GCV method"
+          main="GCV vs Effective rank"
          ylim<-c(0,max(gcvs))
          
          if (id.n > 0)
@@ -291,34 +306,37 @@ plot.dblm<-function(x,which=c(1L:3L, 5L),id.n=3,main="",cook.levels = c(0.5, 1),
           ylim <- extendrange(r = ylim, f = 0.08)
          
          # plot with the optimal effective rank of GCV method 
-         plot(gcvs, type="h",ylim = c(0,max(gcvs)), main = main,col=color,  
+         plot( range.eff.rank, gcvs, type="h",ylim = c(0,max(gcvs)), main = main,col=color,  
             xlab = "effective rank", ylab = "Generalized Cross-validation")
          text(x$eff.rank,pos=3,col="red",cex=0.7,x$gcv,x$eff.rank)
         }
        
         if (method=="AIC"){
          aics<-attr(x,"aics")
-         color<-c(rep("black",(x$eff.rank-1)),"red",rep("black",(length(aics)-x$eff.rank)))
+         color<-c(rep("black",(x$eff.rank-1)),"red",rep("black",(length(aics)-x$eff.rank)))[range.eff.rank]
+         aics<-aics[range.eff.rank]
+         
          
          if ((main==""&&length(which)==1)||length(which)>1)
-          main="effective rank of AIC method"
+          main="AIC vs Effective rank"
          ylim <- range(aics, na.rm = TRUE)
          
          if (id.n > 0)
           # extended the range of y if id.n > 0 
           ylim <- extendrange(r = ylim, f = 0.08)
          # plot with the optimal effective rank of AIC method 
-         plot(aics, type="h", main = main,col=color,         
+         plot(range.eff.rank, aics, type="h", main = main,col=color,         
             xlab = "effective rank",ylim=ylim, ylab = "AIC criteria")
          text(x$eff.rank,pos=1,col="red",cex=0.7,aics[x$eff.rank],x$eff.rank)  
         }
         
         if (method=="BIC"){
          bics<-attr(x,"bics")
-         color<-c(rep("black",(x$eff.rank-1)),"red",rep("black",(length(bics)-x$eff.rank)))
+         color<-c(rep("black",(x$eff.rank-1)),"red",rep("black",(length(bics)-x$eff.rank)))[range.eff.rank]
+         bics<-bics[range.eff.rank]
         
          if ((main==""&&length(which)==1)||length(which)>1)
-          main="effective rank of BIC method"
+          main="BIC vs Effective rank"
          ylim <- range(bics, na.rm = TRUE)
         
          if (id.n > 0) 
@@ -326,7 +344,7 @@ plot.dblm<-function(x,which=c(1L:3L, 5L),id.n=3,main="",cook.levels = c(0.5, 1),
           ylim <- extendrange(r = ylim, f = 0.08) 
           
          # plot with the optimal effective rank of BIC method  
-         plot(bics, type="h", main = main,col=color,     
+         plot(range.eff.rank, bics, type="h", main = main,col=color,     
             xlab = "effective rank",ylim=ylim, ylab = "BIC criteria")
          text(x$eff.rank,pos=1,col="red",cex=0.7,bics[x$eff.rank],x$eff.rank)  
         }        

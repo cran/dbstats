@@ -1,6 +1,7 @@
 print.summary.dbplsr <- function(x,digits=4,...){
   # print the call
  cat("\ncall:   ")
+ x$call[[1]]<-as.name("dbplsr")
  print(x$call)
 
  ncomp <- x$ncomp
@@ -11,7 +12,7 @@ print.summary.dbplsr <- function(x,digits=4,...){
   print(format(summary(as.numeric(x$residuals[[ncomp+1]])),digits=3),quote = FALSE)
     if(x$method!="ncomp"){
     cat(gettextf("\nOptimal number of components using method %s: ",x$method," "))
-    cat(x$ncomp_opt)
+    cat(x$ncomp.opt)
   }
     
   # print the appropriate statistic according to the using method 
@@ -27,12 +28,12 @@ print.summary.dbplsr <- function(x,digits=4,...){
  # print R-squared and adjusted R-squared
  cat("\n% variance explained: \n")
   if(x$method!="ncomp")
-   var_exp <- t(data.frame(R2=R2,adjR2=adjR2,gvar=gvar,crit=x$crit.value))
+   var.exp <- t(data.frame(R2=R2,adjR2=adjR2,gvar=gvar,crit=x$crit.value))
   else
-   var_exp <- t(data.frame(R2=R2,adjR2=adjR2,gvar=gvar))
+   var.exp <- t(data.frame(R2=R2,adjR2=adjR2,gvar=gvar))
   
- colnames(var_exp)<-names(x$residuals)[2:(ncomp+1)]
- print(var_exp,digits=digits)
+ colnames(var.exp)<-names(x$residuals)[2:(ncomp+1)]
+ print(var.exp,digits=digits)
  cat("\n")
  
 

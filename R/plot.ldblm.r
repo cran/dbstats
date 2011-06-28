@@ -82,12 +82,12 @@ plot.ldblm <-function(x,which=c(1L,2L),id.n=3,main="",...){
       
     if(show[3L]){
       # bandwidth vs method statisticals
-      method<-attr(x,"method") # method of ldblm call
+      method.h<-attr(x,"method.h") # method of ldblm call
       noh<-attr(x,"noh")       # number of possible bandwidths
       h_vec<-attr(x,"h_vec")   # bandwidth used in ldblm
        
       # Ordinary Cross validation method
-      if(method=="OCV"){
+      if(method.h=="OCV"){
           
          ocvs<-attr(x,"OCV")              # ocv's for each bandwidth
          ocv_opt<-attr(x,"OCV_opt")       # optimal ocv
@@ -97,18 +97,18 @@ plot.ldblm <-function(x,which=c(1L,2L),id.n=3,main="",...){
          color[which(ocv_opt==ocvs)]<-"red"
          
          if ((main==""&&length(which)==1)||length(which)>1)
-          main="bandwidth h of OCV method"
+          main="Bandwidth h of OCV method.h"
          ylim<-c(0,max(ocvs))
          
-         # plot with the optimal bandwidth of OCV method
+         # plot with the optimal bandwidth of OCV method.h
          plot(h_vec,ocvs,type="h", main = main,col=color,  
             xlab = "bandwidth h", ylab = "Ordinary Cross-validation")
          # identify the selected h
-         text(x$h_opt,pos=3,col="red",cex=0.7,ocv_opt,round(x$h_opt,4)) 
+         text(x$h.opt,pos=3,col="red",cex=0.7,ocv_opt,round(x$h.opt,4)) 
       }
      
-      # Generalized Cross validation method
-      if(method=="GCV"){
+      # Generalized Cross validation method.h
+      if(method.h=="GCV"){
         
          gcvs<-attr(x,"GCV")
          gcv_opt<-attr(x,"GCV_opt")
@@ -117,18 +117,18 @@ plot.ldblm <-function(x,which=c(1L,2L),id.n=3,main="",...){
          color[which(gcv_opt==gcvs)]<-"red"
          
         if ((main==""&&length(which)==1)||length(which)>1)
-          main="bandwidth h of GCV method"
+          main="Bandwidth h of GCV method.h"
      
          
-         # plot with the optimal bandwidth of GCV method                        
+         # plot with the optimal bandwidth of GCV method.h                        
          plot(h_vec,gcvs,type="h", main = main,col=color,     
             xlab = "bandwidth h", ylab = "Generalized Cross-validation")
          # identify the selected h
-         text(x$h_opt,pos=3,col="red",cex=0.7,gcv_opt,round(x$h_opt,4))   
+         text(x$h.opt,pos=3,col="red",cex=0.7,gcv_opt,round(x$h.opt,4))   
       }                                                                                       
       
         
-      if(method=="AIC"){
+      if(method.h=="AIC"){
          aics<-attr(x,"AIC")
          aic_opt<-attr(x,"AIC_opt")
          
@@ -136,17 +136,17 @@ plot.ldblm <-function(x,which=c(1L,2L),id.n=3,main="",...){
          color[which(aic_opt==aics)]<-"red"
         
          if ((main==""&&length(which)==1)||length(which)>1)
-          main="bandwidth h of AIC method"
+          main="Bandwidth h of AIC method.h"
          
          
-         # plot with the optimal bandwidth of AIC method
+         # plot with the optimal bandwidth of AIC method.h
          plot(h_vec,aics,type="h", main = main,col=color,      
             xlab = "bandwidth h", ylab = "Aikaike Information Criterium")
          # identify the selected h
-         text(x$h_opt,pos=3,col="red",cex=0.7,aic_opt,round(x$h_opt,4))     
+         text(x$h.opt,pos=3,col="red",cex=0.7,aic_opt,round(x$h.opt,4))     
         }
         
-       if(method=="BIC"){
+       if(method.h=="BIC"){
          bics<-attr(x,"BIC")
          bic_opt<-attr(x,"BIC_opt")
          
@@ -154,17 +154,17 @@ plot.ldblm <-function(x,which=c(1L,2L),id.n=3,main="",...){
          color[which(bic_opt==bics)]<-"red"
          
          if ((main==""&&length(which)==1)||length(which)>1)
-          main="bandwidth h of BIC method"
+          main="Bandwidth h of BIC method.h"
    
          
-         # plot with the optimal bandwidth of BIC method
+         # plot with the optimal bandwidth of BIC method.h
          plot(h_vec,bics,type="h", main = main,col=color,       
             xlab = "bandwidth h", ylab = "Bayesian Information Criterium")
          # identify the selected h 
-         text(x$h_opt,pos=3,col="red",cex=0.7,bic_opt,round(x$h_opt,4))     
+         text(x$h.opt,pos=3,col="red",cex=0.7,bic_opt,round(x$h.opt,4))     
         }
-        if(method=="user_h")
-         warning("there is not plot of bandwidth selection if method=user_h" )     
+        if(method.h=="user.h")
+         warning("there is not plot of bandwidth selection if method.h=user.h" )     
       }
       return (invisible())
  }

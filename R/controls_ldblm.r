@@ -10,7 +10,7 @@
  ##
 
 
-controls_ldblm <- function(dist1,dist2,user_h,method,h.range,noh,k.knn,
+controls_ldblm <- function(dist1,dist2,user.h,method,h.range,noh,k.knn,
                     kind.of.kernel,y,weights)
 {
 
@@ -25,15 +25,15 @@ controls_ldblm <- function(dist1,dist2,user_h,method,h.range,noh,k.knn,
     stop("Weights array weights is not valid: sum(weights)=0")
 
     # controls: user_h
-    if(is.null(user_h)&&method=="user_h")
-     user_h<-quantile(as.dist(dist1)^.5,.25)
-    if (user_h<=0&&method=="user_h")
-     stop("user_h must be upper than 0")                 
+    if(is.null(user.h)&&method=="user.h")
+     user.h<-quantile(as.dist(dist1)^.5,.25)
+    if (user.h<=0&&method=="user.h")
+     stop("user.h must be upper than 0")                 
 
     # controls: h.range
-    if(is.null(h.range)&&method!="user_h")
+    if(is.null(h.range)&&method!="user.h")
      h.range<-quantile(as.dist(dist1),c(.05,0.5))^.5
-    if (method!="user_h"&&length(h.range)!=2)
+    if (method!="user.h"&&length(h.range)!=2)
      stop("h.range must be a numeric vector of lenght two")
 
     # controls: y and dist1, dist2
@@ -61,5 +61,5 @@ controls_ldblm <- function(dist1,dist2,user_h,method,h.range,noh,k.knn,
         &&(kind.of.kernel!=4)&&(kind.of.kernel!=5)&&(kind.of.kernel!=6))
       stop("kind of kernel must be a natural number between 1 and 6")
       
-   return(list(dist1=dist1,dist2=dist2,user_h=user_h,h.range=h.range,weights=weights))
+   return(list(dist1=dist1,dist2=dist2,user.h=user.h,h.range=h.range,weights=weights))
  }

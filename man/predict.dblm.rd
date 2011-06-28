@@ -15,7 +15,7 @@
  }
  
 \usage{
-\method{predict}{dblm}(object,newdata,type="Z",...)
+\method{predict}{dblm}(object,newdata,type.var="Z",...)
 }
 
 \arguments{
@@ -23,16 +23,12 @@
    an object of class \code{dblm}. Result of \code{\link{dblm}}.
  }
  \item{newdata}{
-      data.frame or matrix which contains the values of Z (if \code{type_var="Z"} 
-   and \code{dblm} has been called by \code{\link{dblm.formula}} format). 
-   The squared distances between k new individuals and the original n 
-   individuals (only if \code{type_var="D2"} and \code{dblm} has been called 
-   by \code{\link{dblm.dist}} or \code{\link{dblm.D2}} format). 
-   Finally, the G inner products matrix (if \code{type_var="G" } and \code{dblm}
-   has been called by \code{\link{dblm.Gram}} format).
+ data.frame or matrix which contains the values of Z (if \code{type.var="Z"}. 
+The squared distances between k new individuals and the original n individuals (only if \code{type.var="D2"}). 
+Finally, the G inner products matrix (if \code{type.var="G"}).
 }
-  \item{type}{
-     set de type of newdata. Can be \code{"Z"} if newdata 
+  \item{type.var}{
+     set de type.var of newdata. Can be \code{"Z"} if newdata 
    contains the values of the explanatory variables, \code{"D2"} if 
    contains the squared distances matrix or \code{"G"} if contains the 
    inner products matrix.      
@@ -47,8 +43,8 @@
 }
 
 \note{
-  Look at which way (or \code{type}) was made the \code{dblm} call. 
- The parameter \code{type} must be consistent with the data type that is 
+  Look at which way (or \code{type.var}) was made the \code{dblm} call. 
+ The parameter \code{type.var} must be consistent with the data type that is 
  introduced to \code{dblm}.    
 }
                     
@@ -91,15 +87,15 @@ s <- 1
 e <- rnorm(n)*s
 y <- Z\%*\%b + e
 
-D<-dist(Z)
-D2<-disttoD2(D)
-D2_train<-D2[1:90,1:90]
+D <- dist(Z)
+D2 <- disttoD2(D)
+D2_train <- D2[1:90,1:90]
 class(D2_train)<-"D2"
 
-dblm1<-dblm.D2(D2_train,y[1:90])
+dblm1 <- dblm(D2_train,y[1:90])
 
-newdata<-D2[91:100,1:90]
-predict(dblm1,newdata,type="D2")
+newdata <- D2[91:100,1:90]
+predict(dblm1,newdata,type.var="D2")
 
 
 }

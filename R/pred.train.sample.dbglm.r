@@ -29,6 +29,8 @@
 
      # initialize yhat, weights S and  Smoothing hat matrix Shat
      yhat <- rep(0,n)
+     varmu <- rep(0,n) #Pedro
+     dev.resids <- rep(0,n) #Pedro
      S<- matrix(0,n,n)
      Shat <- matrix(0,n,n)
 
@@ -49,8 +51,8 @@
        else
          eff.rank_aux<- NULL
         
-       aux <- dbglm.D2(y=y_aux,D2=dist2_aux,weights=weights[iid]*weights_aux,
-                    family=family,rel.gvar=rel.gvar,eff.rank=eff.rank_aux,
+       aux <- dbglm(D2=dist2_aux,y=y_aux,weights=weights[iid]*weights_aux,  
+                    method="rel.gvar", family=family,rel.gvar=rel.gvar,eff.rank=eff.rank_aux,
                     maxiter=maxiter,eps1=eps1,eps2=eps2) 
                                                  
        Hhat<-matrix(0,n,n)
@@ -61,8 +63,11 @@
        Shat[i,]<-auxshat[i,] 
 
        yhat[i] <- aux$fitted.values[which(i==iid)]
+       varmu[i] <- aux$varmu[i]           
+       dev.resids[i] <- aux$dev.resids[which(i==iid)]  
      }
      
      # return Shat matrix and yhat values
-     return(list(Shat=Shat,yhat=yhat,y=aux$y))
+     return(list(Shat=Shat,yhat=yhat,y=aux$y, 
+                 varmu=varmu,dev.resids=dev.resids)) 
   }

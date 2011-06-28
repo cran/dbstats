@@ -22,7 +22,7 @@ summary.dbglm <-function(object,dispersion=NULL,...){
    new_weights <-object$weights
    weights <-object$prior.weights
    residuals <-object$residuals
-   call<-attr(object,"call")
+   call<-object$call
    G<-attr(object,"G")
    
    # G vector
@@ -59,6 +59,7 @@ summary.dbglm <-function(object,dispersion=NULL,...){
    
   # return a list with the following attributes
   ans<-list(call=call,family=family,deviance=object$deviance,aic=object$aic.model,
+            bic = object$bic.model, gcv = object$gcv.model,
             df.residual=df.r,null.deviance=object$null.deviance,
             df.null=object$df.null,iter=object$iter,deviance.resid=deviance.resid,
             pears.resid=pears.resid,dispersion=dispersion,gvar=gvar,gvec=gvec,

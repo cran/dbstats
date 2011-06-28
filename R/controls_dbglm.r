@@ -11,7 +11,7 @@
 
 
 controls_dbglm <- function(distance,weights,offset,rel.gvar,maxiter,eps1,
-                            eps2,y)
+                            eps2,y, method)
 {
   # program controls: y
    if (missing(y)||is.null(y))
@@ -47,11 +47,9 @@ controls_dbglm <- function(distance,weights,offset,rel.gvar,maxiter,eps1,
    }
    
    # program controls: rel.gvar
-   if (is.null(rel.gvar))
-      rel.gvar=0.95
-   if (!is.null(rel.gvar)&&is.numeric(rel.gvar)&&((rel.gvar<0)||(rel.gvar>1)))
+   if (method=="rel.gvar"&&is.numeric(rel.gvar)&&((rel.gvar<0)||(rel.gvar>1)))
       stop("'rel.gvar must be between 0 and 1")
-   if (!is.null(rel.gvar)&&!is.numeric(rel.gvar))
+   if (method=="rel.gvar"&&!is.numeric(rel.gvar))
       stop("'rel.gvar' must be a float number between 0 and 1")
       
    # program controls: maxiter

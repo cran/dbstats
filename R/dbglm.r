@@ -32,15 +32,19 @@
     #### dbglm of class formula ####
     ################################
     
-     #generic function with a commun parameter (y).
+ #generic function with a commun parameter (y).
  dbglm<-function(...)  UseMethod("dbglm")
  
- dbglm.formula <-function(formula,data,family=gaussian,...,metric="euclidean",
+ dbglm.formula <-function(formula,data,family=gaussian, method ="GCV", full.search=TRUE,...,metric="euclidean",
             weights,maxiter=100,eps1=1e-10,eps2=1e-10,rel.gvar=0.95,eff.rank=NULL,
-            offset,mustart=NULL) 
+            offset,mustart=NULL, range.eff.rank ) 
 {
   # call dbglm
   mf <- match.call(expand.dots = FALSE)
+  
+  if (missing(range.eff.rank))
+   range.eff.rank <- NULL
+   
   
   # control metric. See the auxiliar function
   metric<-control_metric(metric)    
@@ -52,15 +56,15 @@
   zy <- formula_to_zy(formula,data,mf,"dbglm",metric)
   
   # y and z are defined--> pass to default method (try for avoid the program crash).
-  try(ans <- dbglm.yz(y=zy$y,z=zy$z,metric=metric,family=family,weights=weights,
-           maxiter=maxiter,eps1=eps1,eps2=eps2,rel.gvar=rel.gvar,eff.rank=eff.rank,
-           offset=offset,mustart=mustart))        
+  try(ans <- dbglm.yz(y=zy$y,z=zy$z,metric=metric,family=family, method = method, full.search =full.search,
+            weights=weights,maxiter=maxiter,eps1=eps1,eps2=eps2,rel.gvar=rel.gvar,eff.rank=eff.rank,
+            offset=offset,mustart=mustart,range.eff.rank=range.eff.rank))        
  
   if (class(ans)[1]=="try-error") 
    return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
   
   # hidden attribute 'call' (used in print and summary)
-  attr(ans,"call") <- mf
+  ans$call <- mf
   attr(ans,"zs") <- zy$zini
   return(ans)   
 }
@@ -71,17 +75,20 @@
     #### default dbglm (y,z) #######
     ################################
 
-dbglm.yz <- function(y,z,family=gaussian,metric="euclidean",
-        weights,maxiter=100,eps1=1e-10,eps2=1e-10,
+dbglm.yz <- function(y,z,family=gaussian,metric="euclidean", method ="GCV",
+        full.search=TRUE, weights,maxiter=100,eps1=1e-10,eps2=1e-10,
         rel.gvar=0.95,eff.rank=NULL,offset = rep(0, length(y)),
-        mustart=NULL,...)
+        mustart=NULL, range.eff.rank,...)
 {
   # See if z or distance matrix is defined by the user.
-   require(cluster)
+  # require(cluster)
 
    # control metric. See the auxiliar function
    metric <- control_metric(metric)
- 
+   
+   if (missing(range.eff.rank))
+    range.eff.rank <- NULL
+    
    # call z_to_dist to pass the explanatory variables to an object of class dist 
    dist_and_way <- z_to_dist(z,metric)
    D <- dist_and_way$D
@@ -95,9 +102,9 @@ dbglm.yz <- function(y,z,family=gaussian,metric="euclidean",
      D2 <-disttoD2(D)
      
    # y and Distance are defined--> pass to dist method (try for avoid the program crash). 
-   try(ans<-dbglm.D2(y=y,D2=D2,family=family,weights=weights,maxiter=maxiter,
+   try(ans<-dbglm.D2(y=y,D2=D2,family=family, method =method, full.search=full.search, weights=weights,maxiter=maxiter,
           eps1=eps1,eps2=eps2,eff.rank=eff.rank,rel.gvar=rel.gvar,
-          offset = offset,mustart=mustart))     
+          offset = offset,mustart=mustart,range.eff.rank=range.eff.rank))     
     
    if (class(ans)[1]=="try-error") 
     return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
@@ -105,7 +112,7 @@ dbglm.yz <- function(y,z,family=gaussian,metric="euclidean",
    # hidden attributes 'metric', 'call', 'zs' and 'way'  
    attr(ans,"metric")<-metric
    attr(ans,"zs")<-z
-   attr(ans,"call")<-match.call(expand.dots = FALSE)
+   ans$call  <- match.call(expand.dots = FALSE)
    attr(ans,"way")<-way
   
    return(ans)
@@ -117,28 +124,30 @@ dbglm.yz <- function(y,z,family=gaussian,metric="euclidean",
     ####  dissimilarity distance ####
     #################################
 
-dbglm.dist <- function(distance,y,family=gaussian,weights,maxiter=100,
-                eps1=1e-10,eps2=1e-10,rel.gvar=0.95,eff.rank=NULL,
-                offset,mustart=NULL,...)
+dbglm.dist <- function(distance,y,family=gaussian, method = "GCV", full.search=TRUE,weights,maxiter=100,
+                eps1=1e-10,eps2=1e-10,rel.gvar=0.95,eff.rank=NULL, offset,mustart=NULL, range.eff.rank,...)
 { 
   
    # program controls: distance must be of class D2 dist or dissimilarity.
    if (missing(distance)||is.null(distance))
     stop("distance must be defined")
     
+   if (missing(range.eff.rank))
+    range.eff.rank <- NULL
+   
    # dist to D2
    # dist to D2
    Delta <- disttoD2(distance)     
   
-   try(ans <- dbglm.D2(D2=Delta,y=y,family=family,weights=weights,maxiter=maxiter,
+   try(ans <- dbglm.D2(D2=Delta,y=y,family=family, method =method, full.search=full.search, weights=weights,maxiter=maxiter,
          eps1=eps1,eps2=eps2,rel.gvar=rel.gvar,eff.rank=eff.rank,
-         offset = offset,mustart=mustart))
+         offset = offset,mustart=mustart,range.eff.rank=range.eff.rank))
 
   if (class(ans)[1]=="try-error")
    return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
    
   # hidden attributes 'call' and 'way'   
-  attr(ans,"call")<-match.call(expand.dots = FALSE)
+  ans$call <-match.call(expand.dots = FALSE)
   attr(ans,"way")<-"D2"
   attr(ans,"zs")<-Delta
 
@@ -150,8 +159,8 @@ dbglm.dist <- function(distance,y,family=gaussian,weights,maxiter=100,
     ####  dbglm with D2 distance ####
     #################################
 
-dbglm.D2<-function(D2,y,...,family=gaussian,weights,maxiter=100,eps1=1e-10,
-              eps2=1e-10,rel.gvar=0.95,eff.rank=NULL,offset,mustart=NULL)
+dbglm.D2<-function(D2,y,...,family=gaussian, method ="GCV", full.search=TRUE, weights,maxiter=100,eps1=1e-10,
+              eps2=1e-10,rel.gvar=0.95,eff.rank=NULL,offset,mustart=NULL, range.eff.rank)
 { 
   # D2 squared distances must be of class "D2"
   if (!any (class(D2)=="D2")) 
@@ -164,7 +173,13 @@ dbglm.D2<-function(D2,y,...,family=gaussian,weights,maxiter=100,eps1=1e-10,
 
    # Program controls: see de auxiliar function 
    controls <- controls_dbglm(Delta,weights,offset,rel.gvar,maxiter,
-                        eps1,eps2,y)
+                        eps1,eps2,y, method)
+   
+   method <-control_method(method,"dbglm")  
+   
+   if (missing(range.eff.rank))
+    range.eff.rank <- NULL
+   
    weights  <- controls$weights 
    #weights <- weights/sum(weights)
    offset   <- controls$offset 
@@ -198,7 +213,7 @@ dbglm.D2<-function(D2,y,...,family=gaussian,weights,maxiter=100,eps1=1e-10,
    validmu <- family$validmu  
    
    # possibles links
-   problem.links<-c("inverse","identity","logit","1/mu^2") 
+   problem.links <- c("inverse","identity","logit","1/mu^2") 
       
    # Iterative dblm:  Distance-Based Linear Model (with weights)
    # Step 0: Initial values, assigned by the user, or set the intrinsic values 
@@ -225,144 +240,134 @@ dbglm.D2<-function(D2,y,...,family=gaussian,weights,maxiter=100,eps1=1e-10,
             stop("cannot find valid starting values: please specify some",
                 call. = FALSE)
    
-   # Deviance Dev 
-   Dev<-sum(dev.resids(y,mu,weights))
-   dblm_aux <- NULL
-   # Step i, i=iter, 1<=iter<=maxiter
-   iter <- 0   
-   while ( TRUE ){
-     iter <- iter + 1
-     mu0 <- mu
-     Dev0 <- Dev
-     dblm0 <- dblm_aux
-     eta0 <-eta
+   ### select eff.rank new!!!
+   GCV           <- NULL
+   BIC           <- NULL
+   AIC           <- NULL        
+   old.criterion <- NULL
 
-     # gdmu and wdmu, using the derivative function of eta
-     gdmu<- 1/mu.eta(eta)
-     wdmu<- mu.eta(eta)
-
-     # the weights must be > 0 and wdmu must be != 0 to fit the dblm.
-     good <- weights > 0
-     if (any(is.na(wdmu[good])))
-       stop("NAs in d(mu)/d(eta)")
-     good <- (weights > 0) & (wdmu != 0)
-     # if all the observations are not good -->  break the program  
-     if (all(!good)) {
-        stop("no observations informative at iteration ",iter)
-     }
-     # varmu = variance only with good observations. 
-     varmu <- variance(mu)[good]
-     if (any(is.na(varmu)))
-       stop("NAs in V(mu)")
-     if (any(varmu == 0))
-       stop("0s in V(mu)")
-     
-     # new y, to fit the dblm. z only has the good observations
-     z <- (eta-offset)[good] + (y-mu)[good]/wdmu[good]    
-
-     # new_weights, see pag 43 of generalized linear models.  
-     new_weights<- (weights[good] * wdmu[good]^2)/varmu
-     Delta_aux<-Delta[good,good]
-
-     # make the dblm only with the valid observations (weights > 0)
-     class(Delta_aux)="D2"
-    
-     if (!is.null(eff.rank))
-      method="eff.rank"
-     else
-      method="rel.gvar" 
-     
-    if (!is.null(eff.rank))
-       eff.rank_aux<-min(length(z)-1,eff.rank)
-    else
-       eff.rank_aux<- NULL
-     
-     if (length(z)<2)
-      stop(paste("there are only one observation in the dblm iteration ",iter,". The weights are negative. Try to use other link"))
-           
-      
-     dblm_aux <- dblm.D2(D2=Delta_aux,y=z,weights=new_weights,method=method,
-                    rel.gvar=rel.gvar,eff.rank=eff.rank_aux)          
-     Hhat<-dblm_aux$H
-     
-     # eta[good] = fitted values of the dblm (only with good observations)
-     eta[good]<-dblm_aux$fitted.values
-     
-     # predict the values of the observations with negative weights or a wdmu=0
-     if (any(!good)){ 
-       Hhat=matrix(0,ncol=nobs,nrow=nobs)   
-
-       Delta_pr<-Delta[!good,good]
-       if (is.null(nrow(Delta_pr))) 
-        Delta_pr <- t(as.matrix(Delta_pr))
-       
-       class(Delta_pr)<-"D2"
-       eta[which(!good)]<-predict(dblm_aux,Delta_pr,type="D2")
-       Hhat[good,good]<-dblm_aux$H   
-     }
-     
-     # link: 1. logit, 2. logarithmic, 3. Identity, 4. mu-1, 5. mu-2 
-     mu<-linkinv(eta)                                      
-     Dev<- sum(dev.resids(y,mu,weights))
-     
-     if (is.finite(any(mu<0)))
-      neg.mu<-any(mu<0)
-     else 
-      neg.mu<-TRUE
-                                              
-     if (!is.finite(Dev) && neg.mu && any(problem.links==family$link)){
-      stop(gettextf("The linear predictor is negative and some components of 'mu' are < 0. The Deviance in the iteration %i is NULL, 
-                      Try to change the link to any one different than: 'inverse', 'identity', 'logit' or '1/mu^2'",iter))
-     }
-    
-     if (!is.finite(Dev))
-      stop("The deviance is Null. Try to change the link function.")
-       
-     # check if the the relative error of mu and Dev is small enough 
-     rel_incr_mu <- sum(abs(mu-mu0))/sum(abs(mu))
-     rel_incr_Dev <- abs(Dev - Dev0)/(0.1 + abs(Dev))
-      
-     if (rel_incr_Dev < eps1){
-       convcrit <- "DevStat"
-       break
-     }
-     if (rel_incr_mu < eps2){
-       convcrit <- "muStat"
-       break
-     }
-     if (iter>=maxiter){
-       convcrit <- "MaxIter"  
-       break
-     }
-   }
-  
-   # residuals, residuals degree of freedom, null deviance and aic 
-   wtdmu<-sum(weights*y)/sum(weights)
-   null.deviance<-sum(dev.resids(y,wtdmu,weights))
-   n.ok<-nobs-sum(weights==0)
-   df.null<-n.ok-1
-   df.residual<-df.null-dblm_aux$eff.rank
-   aic.model<-aic(y,n,mu,weights,Dev)+2*(dblm_aux$eff.rank+1)              
-   
-   # residuals like glm
-   residuals<-(y-mu)/mu.eta(eta)
  
+   dev.resids <- family$dev.resids # deviance
+   aic <- family$aic               # aic
+   mu.eta <- family$mu.eta         # wdmu: derivative function(eta)
+
+   valideta <-family$valideta      # check if starting values mu and eta are valid 
+   validmu <- family$validmu  
+   call    <- match.call(expand.dots = FALSE)
+     
+   if (all(method != c("eff.rank","rel.gvar")))
+   {
+     if (is.null(range.eff.rank))
+              stop("'range.eff.rank' must be specified")
+     else 
+     {
+       if(length(range.eff.rank)!=2 || range.eff.rank[2]- range.eff.rank[1]<0)
+            stop("'range.eff.rank' is not correctly specified")
+     }   
+              
+    GCV           <- rep(0,range.eff.rank[2]- range.eff.rank[1] + 1)
+    BIC           <- rep(0,range.eff.rank[2]- range.eff.rank[1] + 1)
+    AIC           <- rep(0,range.eff.rank[2]- range.eff.rank[1] + 1)        
+    old.criterion <- Inf
+      
+     if(full.search)
+     { 
+        for (eff.rank in range.eff.rank[1]:range.eff.rank[2])
+        {
+           dbglm.aux    <- dbglm.iteration(y = y, mu = mu, weights = weights, nobs = nobs, eta = eta, Delta=Delta, method=method, 
+                                           offset = offset, n = n, eff.rank = eff.rank, rel.gvar = rel.gvar, dev.resids=dev.resids,
+                                           aic=aic, mu.eta = mu.eta, valideta=valideta, validmu=validmu, family=family,
+                                           variance=variance,linkinv=linkinv, problem.links=problem.links, eps1=eps1,eps2=eps2,maxiter=maxiter)
+           
+          if (method == "GCV" && dbglm.aux$gcv.model < old.criterion)
+          {
+             dbglm.opt     <- dbglm.aux
+             old.criterion <- dbglm.aux$gcv.model 
+          }
+          if (method == "AIC" && dbglm.aux$aic < old.criterion)
+          {
+             dbglm.opt     <- dbglm.aux
+             old.criterion <- dbglm.aux$aic.model 
+          }
+          if (method == "BIC" && dbglm.aux$bic.model < old.criterion)
+          {
+             dbglm.opt     <- dbglm.aux
+             old.criterion <- dbglm.aux$bic.model 
+          }
+           
+           AIC[eff.rank] <- dbglm.aux$aic.model
+           BIC[eff.rank] <- dbglm.aux$bic.model 
+           GCV[eff.rank] <- dbglm.aux$gcv.model
+        }
+     }
+     else
+     {
+        f <- function(rk, y, mu, weights,  nobs, eta, Delta, method, offset, n, rel.gvar, dev.resids,
+                                         aic, mu.eta, valideta, validmu, family,variance, linkinv, problem.links,
+                                         eps1,eps2,maxiter)
+        {
+       
+           dbglm.aux    <- dbglm.iteration(y = y, mu = mu, weights = weights, nobs = nobs, eta = eta, Delta=Delta, method=method, 
+                                           offset = offset, n = n, eff.rank = rk, rel.gvar = rel.gvar, dev.resids=dev.resids,
+                                           aic=aic, mu.eta = mu.eta, valideta=valideta, validmu=validmu, family=family,
+                                           variance=variance,linkinv=linkinv, problem.links=problem.links, eps1=eps1,eps2=eps2,maxiter=maxiter)
+           
+          if (method == "GCV")
+          {
+             criterion <- dbglm.aux$gcv.model 
+          }
+          if (method == "AIC")
+          {
+             criterion <- dbglm.aux$aic.model 
+          }
+          if (method == "BIC")
+          {
+             criterion <- dbglm.aux$bic.model 
+          }
+          return(criterion)
+      }         
+      criterion.opt <- optimise(f = f, range.eff.rank ,y = y, mu = mu, weights = weights, nobs = nobs, eta = eta, Delta=Delta, method=method, 
+                         offset = offset, n = n,  rel.gvar = rel.gvar, dev.resids=dev.resids,
+                         aic=aic, mu.eta = mu.eta, valideta=valideta, validmu=validmu, family=family,
+                         variance=variance,linkinv=linkinv, problem.links=problem.links, eps1=eps1,eps2=eps2,maxiter=maxiter)
+    
+      eff.rank  <- round(criterion.opt$minimum)
+      criterion <- criterion.opt$objective
+
+      dbglm.opt    <- dbglm.iteration(y = y, mu = mu, weights = weights,  nobs = nobs, eta = eta, Delta=Delta, method=method, 
+                                         offset = offset, n = n, eff.rank = eff.rank, rel.gvar = rel.gvar, dev.resids=dev.resids,
+                                         aic=aic, mu.eta = mu.eta, valideta=valideta, validmu=validmu, family=family,
+                                         variance=variance,linkinv=linkinv, problem.links=problem.links, eps1=eps1,eps2=eps2,maxiter=maxiter)
+
+     }   
+   } 
+   else
+   {
+         dbglm.opt    <- dbglm.iteration(y = y, mu = mu, weights = weights,  nobs = nobs, eta = eta, Delta=Delta, method=method, 
+                                         offset = offset, n = n, eff.rank = eff.rank, rel.gvar = rel.gvar, dev.resids=dev.resids,
+                                         aic=aic, mu.eta = mu.eta, valideta=valideta, validmu=validmu, family=family,
+                                         variance=variance,linkinv=linkinv, problem.links=problem.links, eps1=eps1,eps2=eps2,maxiter=maxiter)
+   }      
+   
+  
    # return a list with the following attributes 
-   ans<-list(residuals=residuals,fitted.values=mu,family=family,deviance=Dev,
-            aic.model=aic.model,null.deviance=null.deviance,iter=iter,
-            weights=new_weights,prior.weights=weights,df.residual=df.residual,
-            df.null=df.null,y=y,convcrit=convcrit,H=Hhat,
-            rel.gvar=dblm_aux$rel.gvar,eff.rank=dblm_aux$eff.rank)
-                        
-                         
+   ans <- dbglm.opt
+   ans$call <- call                      
    class(ans) <- c(ans$class, c("dbglm", "dblm"))
-   attr(ans,"last_dblm")<- dblm_aux
-   attr(ans,"call")<-match.call(expand.dots = FALSE)
+   attr(ans,"last_dblm")<- dbglm.opt$dblm_aux
    attr(ans,"ori_weights")<-weights
    attr(ans,"way")<-"D2"
    attr(ans,"G")<-D2toG(Delta,weights)
    attr(ans,"zs")<-Delta
    attr(ans,"eta")<-eta  
+   attr(ans,"aics")<-AIC  
+   attr(ans,"bics")<-BIC  
+   attr(ans,"gcvs")<-GCV  
+   attr(ans,"full.search")<-full.search
+   attr(ans,"method")<-method
+   attr(ans,"range.eff.rank")<-range.eff.rank
+   
+    
   return(ans)
 }
 
@@ -372,8 +377,8 @@ dbglm.D2<-function(D2,y,...,family=gaussian,weights,maxiter=100,eps1=1e-10,
     ####  dbglm with G products  ####
     #################################
 
-dbglm.Gram<-function(G,y,...,family=gaussian,weights,maxiter=100,eps1=1e-10,
-              eps2=1e-10,rel.gvar=0.95,eff.rank=NULL,offset,mustart=NULL)
+dbglm.Gram<-function(G,y,...,family=gaussian, method ="GCV", full.search=TRUE, weights,maxiter=100,eps1=1e-10,
+              eps2=1e-10,rel.gvar=0.95,eff.rank=NULL,offset,mustart=NULL, range.eff.rank = c(1,ncol(G)-1))
 { 
   # D2 squared distances must be of class "D2"
   if (class(G)[1]!="Gram") 
@@ -382,15 +387,15 @@ dbglm.Gram<-function(G,y,...,family=gaussian,weights,maxiter=100,eps1=1e-10,
   
    D2<-GtoD2(G)
    
-   try(ans <- dbglm.D2(D2=D2,y=y,family=family,weights=weights,maxiter=maxiter,
+   try(ans <- dbglm.D2(D2=D2,y=y,family=family, method = method, full.search=full.search, weights=weights,maxiter=maxiter,
          eps1=eps1,eps2=eps2,rel.gvar=rel.gvar,eff.rank=eff.rank,
-         offset = offset,mustart=mustart))
+         offset = offset,mustart=mustart,range.eff.rank=range.eff.rank))
   }
   if (class(ans)[1]=="try-error")
    return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
   
   # hidden attributes 'call' and 'way'   
-  attr(ans,"call")<-match.call(expand.dots = FALSE)
+  ans$call <-match.call(expand.dots = FALSE)
   attr(ans,"way")<-"G"
   ans$G <- G    
   return(ans)

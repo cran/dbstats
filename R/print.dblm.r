@@ -21,6 +21,8 @@ print.dblm<-function(x,...){
  
   # the call 
   cat("\ncall:   ")
+  x$call[[1]]<-as.name("dblm")
+  
   print(x$call)	
 
   # the using method
@@ -34,7 +36,7 @@ print.dblm<-function(x,...){
    cat(gettextf("\nmethod: %s",attr(x,"method")),",\t")  
    
   if (attr(x,"method")!="eff.rank"&&attr(x,"method")!="rel.gvar"){
-    if (attr(x,"full_search"))
+    if (attr(x,"full.search"))
       cat("search: full \n")
     else 
       cat("search: optimize \n")

@@ -27,10 +27,10 @@
     ###############################
 
      #generic function with a commun parameter (y).
- dblm<-function(...)  UseMethod("dblm")
+ dblm <- function(...)  UseMethod("dblm")
  
 dblm.formula <- function(formula,data,...,metric="euclidean",method="OCV",
-                    full_search=FALSE,weights,rel.gvar=0.95,eff.rank) 
+                    full.search=TRUE,weights,rel.gvar=0.95,eff.rank) 
 {
   # call dbglm
   mf <- match.call(expand.dots = FALSE)
@@ -45,7 +45,7 @@ dblm.formula <- function(formula,data,...,metric="euclidean",method="OCV",
 
   # y and z are defined--> pass to default method (try for avoid the program crash). 
   try(ans <- dblm.yz(y=zy$y,z=zy$z,metric=metric,weights=weights,
-        eff.rank=eff.rank,method=method,rel.gvar=rel.gvar,full_search=full_search))  
+        eff.rank=eff.rank,method=method,rel.gvar=rel.gvar,full.search=full.search))  
   
   if (class(ans)=="try-error") 
     return(paste("the program failed. Try to read the help. If the error persists attempts to communicate with us "))
@@ -63,13 +63,13 @@ dblm.formula <- function(formula,data,...,metric="euclidean",method="OCV",
     #### aux dblm (y,z) #####
     #############################
 
-dblm.yz <- function(y,z,metric="euclidean",method="OCV",full_search=FALSE,
+dblm.yz <- function(y,z,metric="euclidean",method="OCV",full.search=TRUE,
                   weights,rel.gvar=0.95,eff.rank,...)
 {
 
   call <- match.call(expand.dots = FALSE)
   # See if z or distance matrix is defined by the user.
-  require(cluster)
+  #  require(cluster)
  
   # control metric. See the auxiliar function
   metric<-control_metric(metric)
@@ -88,7 +88,7 @@ dblm.yz <- function(y,z,metric="euclidean",method="OCV",full_search=FALSE,
     
   # y and Distance are defined--> pass to dist method (try for avoid crash). 
   try(ans<-dblm.D2(y=y,D2=D2,weights=weights,eff.rank=eff.rank,method=method,
-               rel.gvar=rel.gvar,full_search=full_search)) 
+               rel.gvar=rel.gvar,full.search=full.search)) 
    
    
   # y and Distance are defined--> pass to dist method (try for avoid crash). 
@@ -111,7 +111,7 @@ dblm.yz <- function(y,z,metric="euclidean",method="OCV",full_search=FALSE,
     ####  dissimilarity distance ####
     #################################
 
-dblm.dist <- function(distance,y,...,method="OCV",full_search=FALSE,weights,
+dblm.dist <- function(distance,y,...,method="OCV",full.search=TRUE,weights,
                 rel.gvar=0.95,eff.rank)
 {   
    call <- match.call(expand.dots = FALSE)                   
@@ -123,7 +123,7 @@ dblm.dist <- function(distance,y,...,method="OCV",full_search=FALSE,weights,
    Delta <- disttoD2(distance)     
    
    try(ans<-dblm.D2(D2=Delta,y=y,weights=weights,eff.rank=eff.rank,
-                  method=method,rel.gvar=rel.gvar,full_search=full_search))
+                  method=method,rel.gvar=rel.gvar,full.search=full.search))
  
    if (class(ans)=="try-error")
      return(paste("the program failed. Try to read the help. If the error persists attempts to communicate with us "))
@@ -139,7 +139,7 @@ dblm.dist <- function(distance,y,...,method="OCV",full_search=FALSE,weights,
     ####  dblm with D2 distance ####
     #################################
     
-dblm.D2 <- function(D2,y,...,method="OCV",full_search=FALSE,weights,
+dblm.D2 <- function(D2,y,...,method="OCV",full.search=TRUE,weights,
             rel.gvar=0.95,eff.rank)
 {  
    # control method. See the auxiliar function
@@ -168,7 +168,7 @@ dblm.D2 <- function(D2,y,...,method="OCV",full_search=FALSE,weights,
    class(G)<-"Gram"
          
    try(ans<-dblm.Gram(G=G,y=y,weights=ori_weights,eff.rank=eff.rank,
-                  method=method,rel.gvar=rel.gvar,full_search=full_search))
+                  method=method,rel.gvar=rel.gvar,full.search=full.search))
                   
  
    if (class(ans)=="try-error")
@@ -186,7 +186,7 @@ dblm.D2 <- function(D2,y,...,method="OCV",full_search=FALSE,weights,
     #############################
  
  
- dblm.Gram <- function(G,y,...,method="OCV",full_search=FALSE,weights,
+ dblm.Gram <- function(G,y,...,method="OCV",full.search=TRUE,weights,
               rel.gvar=0.95,eff.rank)
 {    
   
@@ -218,11 +218,11 @@ dblm.D2 <- function(D2,y,...,method="OCV",full_search=FALSE,weights,
    # l'unic és que facilita el càlcul del nou rank si s'usa un dels 4 metodes. 
    # mirar en les funcions internes el funcionament.
     
-    
+   threshold <- 0
    # Ordinary Cross- validation to choose the effective rank
    if (method=="OCV"){
     # the limit. Number of components such that at least, takes the 99% variability.   
-    llindar<- HwProject(G,Dsqw,rk=eff.rank,epsilon=epsilon,cvyes=TRUE)$eff.rank 
+    threshold <- HwProject(G,Dsqw,rk=eff.rank,epsilon=epsilon,cvyes=TRUE)$eff.rank 
   
     # find the optimal ocv.
     f <- function (rk,G, n, Dsqw, weights, epsilon,
@@ -234,17 +234,17 @@ dblm.D2 <- function(D2,y,...,method="OCV",full_search=FALSE,weights,
        return(auxHwyhat$ocv)
     }
     
-    if (!full_search){
-     ocv_opt<-optimise(f = f,c(1,llindar),G=G, n=n, Dsqw=Dsqw, weights=weights,
+    if (!full.search){
+     ocv_opt <- optimise(f = f,c(1,threshold),G=G, n=n, Dsqw=Dsqw, weights=weights,
       epsilon=epsilon, y=y, y0=y0, cvyes = TRUE, ori_weights=ori_weights,method=method,
       tol =1)
     
      eff.rank <- round(ocv_opt$minimum)
      ocv <- ocv_opt$objective
     }
-    if (full_search){
-     ocvs<-array(0,llindar)
-     ocvs<- apply(as.matrix(1:llindar),1,function(i){f(rk=i,Dsqw=Dsqw,G=G,
+    if (full.search){
+     ocvs<-array(0,threshold)
+     ocvs<- apply(as.matrix(1:threshold),1,function(i){f(rk=i,Dsqw=Dsqw,G=G,
               weights=weights,y=y,y0=y0,n=n,ori_weights=ori_weights,method=method)})
      ocv <-min(ocvs)
      eff.rank <-which.min(ocvs)
@@ -253,7 +253,8 @@ dblm.D2 <- function(D2,y,...,method="OCV",full_search=FALSE,weights,
    }
    # Generalized Cross- validation to choose the effective rank
    if (method=="GCV"){
-     llindar<- HwProject(G,Dsqw,rk=eff.rank,epsilon=epsilon,cvyes=TRUE)$eff.rank
+
+     threshold<- HwProject(G,Dsqw,rk=eff.rank,epsilon=epsilon,cvyes=TRUE)$eff.rank
       
      # find the optimal ocv.
      f <- function (rk,G, n, Dsqw, weights, epsilon,
@@ -265,17 +266,17 @@ dblm.D2 <- function(D2,y,...,method="OCV",full_search=FALSE,weights,
        return(auxHwyhat$gcv)
      }
    
-     if (!full_search){
-      gcv_opt<-optimise(f = f,c(1,llindar),G=G, n=n, Dsqw=Dsqw, weights=weights,
+     if (!full.search){
+      gcv_opt<-optimise(f = f,c(1,threshold),G=G, n=n, Dsqw=Dsqw, weights=weights,
        epsilon=epsilon, y=y, y0=y0, cvyes = TRUE, ori_weights=ori_weights,method=method,
        tol =1)
     
       eff.rank <- round(gcv_opt$minimum)
       gcv <- gcv_opt$objective
      }
-     if (full_search){
-      gcvs<-array(0,llindar)
-      gcvs<- apply(as.matrix(1:llindar),1,function(i){f(rk=i,Dsqw=Dsqw,G=G,
+     if (full.search){
+      gcvs<-array(0,threshold)
+      gcvs<- apply(as.matrix(1:threshold),1,function(i){f(rk=i,Dsqw=Dsqw,G=G,
               weights=weights,y=y,y0=y0,n=n,ori_weights=ori_weights,method=method)})
       gcv <-min(gcvs)
       eff.rank <-which.min(gcvs)
@@ -285,7 +286,7 @@ dblm.D2 <- function(D2,y,...,method="OCV",full_search=FALSE,weights,
   
    # Aikaike and Bayesian criterium to choose the effective rank
    if (method=="AIC" || method=="BIC"){
-     llindar<- HwProject(G,Dsqw,rk=eff.rank,epsilon=epsilon,cvyes=TRUE)$eff.rank
+     threshold <- HwProject(G,Dsqw,rk=eff.rank,epsilon=epsilon,cvyes=TRUE)$eff.rank
      
      # find the optimal ocv.
      f <- function (rk,G, n, Dsqw, weights, epsilon,
@@ -295,15 +296,13 @@ dblm.D2 <- function(D2,y,...,method="OCV",full_search=FALSE,weights,
        auxHwyhat <- Hwyhat(G, n, Dsqw, weights, rk, epsilon,
         y, y0, cvyes = TRUE, ori_weights = ori_weights)
        rss<-(auxHwyhat$resStand.err)^2*auxHwyhat$rdf/n    
-       # aic=2k+n*ln(SSr)
-       if (method=="AIC") b_aic<-2*auxHwyhat$eff.rank+n*log(rss) 
-       # bic=n*log(SSr)+k*ln(n) 
-       if (method=="BIC") b_aic<-n*log(rss)+auxHwyhat$eff.rank*log(n)  
+       if (method=="AIC") b_aic<-2*(auxHwyhat$eff.rank+1)+n*log(rss)  
+       if (method=="BIC") b_aic<-n*log(rss)+(auxHwyhat$eff.rank+1)*log(n) 
        return(b_aic)
      }
      
-     if (!full_search){
-      aic_opt<-optimise(f = f,c(1,llindar),G=G, n=n, Dsqw=Dsqw, weights=weights,
+     if (!full.search){
+      aic_opt<-optimise(f = f,c(1,threshold),G=G, n=n, Dsqw=Dsqw, weights=weights,
        epsilon=epsilon, y=y, y0=y0, cvyes = TRUE, ori_weights=ori_weights,method=method,
        tol =1)
     
@@ -311,9 +310,9 @@ dblm.D2 <- function(D2,y,...,method="OCV",full_search=FALSE,weights,
       if (method=="AIC") aic <- aic_opt$objective
       if (method=="BIC") bic <- aic_opt$objective
      }
-     if (full_search){
-      aics<-array(0,llindar)
-      aics<- apply(as.matrix(1:llindar),1,function(i){f(rk=i,Dsqw=Dsqw,G=G,
+     if (full.search){
+      aics <-array(0,threshold)
+      aics<- apply(as.matrix(1:threshold),1,function(i){f(rk=i,Dsqw=Dsqw,G=G,
               weights=weights,y=y,y0=y0,n=n,ori_weights=ori_weights,method=method)})
       if (method=="AIC") aic <- min(aics)
       if (method=="BIC") bic <- min(aics)
@@ -365,17 +364,19 @@ dblm.D2 <- function(D2,y,...,method="OCV",full_search=FALSE,weights,
    
    # attributes generaly not call by the user(for plot,print and predict functions)
    attr(ans,"sigma")<-resStand.err
-   attr(ans,"full_search") <- full_search
+   attr(ans,"full.search") <- full.search
    attr(ans,"G")<-G
    attr(ans,"method")<-method
    attr(ans,"Fwplus")<-Fwplus
    attr(ans,"way")<-"G"   
+   attr(ans,"threshold")<- threshold   
+   
    if (method=="rel.gvar") attr(ans,"ini_rel.gvar")<- rel.gvar
    if (method=="eff.rank") attr(ans,"ini_eff.rank")<- ini_eff.rank
-   if (method=="OCV"&&full_search) attr(ans,"ocvs")<- ocvs
-   if (method=="GCV"&&full_search) attr(ans,"gcvs")<- gcvs
-   if (method=="AIC"&&full_search) attr(ans,"aics")<- aics
-   if (method=="BIC"&&full_search) attr(ans,"bics")<- aics
+   if (method=="OCV"&&full.search) attr(ans,"ocvs")<- ocvs
+   if (method=="GCV"&&full.search) attr(ans,"gcvs")<- gcvs
+   if (method=="AIC"&&full.search) attr(ans,"aics")<- aics
+   if (method=="BIC"&&full.search) attr(ans,"bics")<- aics
        
    class(ans)<-"dblm"   
    return(ans) 

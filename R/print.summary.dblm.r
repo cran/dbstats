@@ -7,6 +7,7 @@ print.summary.dblm <-function(x,...){
  
  # print the call
  cat("\ncall:   ")
+ x$call[[1]]<-as.name("dblm")
  print(x$call)
 
  # print the Weighted Residuals

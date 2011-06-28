@@ -54,7 +54,7 @@ dbplsr.yz <- function(y,z,metric="euclidean",weights,ncomp,method="ncomp",...)
  
   call <- match.call(expand.dots = FALSE)
   # See if z or distance matrix is defined by the user.
-  require(cluster)
+  #  require(cluster)
   # control metric. See the auxiliar function
   metric<-control_metric(metric)
   
@@ -247,7 +247,7 @@ dbplsr.Gram <- function(G,y,...,weights,ncomp=ncomp,method="ncomp")
                               
    }       
    
-  	ncomp_opt <- switch(method,
+  	ncomp.opt <- switch(method,
 		  "OCV"=which.min(ocv),
 		  "GCV"=which.min(gcv),
 		  "AIC"=which.min(aic),
@@ -256,7 +256,7 @@ dbplsr.Gram <- function(G,y,...,weights,ncomp=ncomp,method="ncomp")
    
                                       
    ans<-list(residuals=ytit,fitted.values=yhat,fk=fk,bk=bk,Pk=Pk,ncomp=ncomp,
-             ncomp_opt=ncomp_opt,weights=ori_weights,method=method,y=y,H=Hk,
+             ncomp.opt=ncomp.opt,weights=ori_weights,method=method,y=y,H=Hk,
              G0=Gini,Gk=Gk,gvar=gvar,gvec=gvec,gvar.iter=gvar.iter,ocv=ocv,
              gcv=gcv,aic=aic,bic=bic)
           

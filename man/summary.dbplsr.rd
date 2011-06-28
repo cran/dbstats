@@ -38,7 +38,7 @@
   \item{gvar.iter }{ geometric variability for each iteration.}   
   \item{method}{ the using method to set \code{ncomp}.}
   \item{crit.value }{ value of criterion defined in \code{method}.}
-   \item{ncomp_opt }{optimum number of components according to the selected method.}  
+   \item{ncomp.opt }{optimum number of components according to the selected method.}  
  
 }
 

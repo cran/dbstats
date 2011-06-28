@@ -1,4 +1,4 @@
-predict.dbplsr <-function(object,newdata,type="Z",...){
+predict.dbplsr <-function(object,newdata,type.var="Z",...){
  
       # stop if the object is not a dblm object.
      if (!inherits(object, "dbplsr"))
@@ -7,17 +7,17 @@ predict.dbplsr <-function(object,newdata,type="Z",...){
      # controls 
      if (missing(newdata))
       stop("newdata matrix must be defined")
-     if (type!="Z"&&type!="D2"&&type!="G")
-      stop("type must be Z for explanatory values, D2 for square distance between individuals or G for centered Euclidean configuration")
+     if (type.var!="Z"&&type.var!="D2"&&type.var!="G")
+      stop("type.var must be Z for explanatory values, D2 for square distance between individuals or G for centered Euclidean configuration")
      
      if (class(newdata)[1]=="dist"|| class(newdata)[1]=="dissimilarity")
       newdata<-disttoD2(newdata)
       
      # if new data have the explanatory values of the new indiviudals      
-     if (type=="Z"){
+     if (type.var=="Z"){
          newdata<-as.data.frame(newdata)
          if (attr(object,"way")=="D2"||attr(object,"way")=="G")
-           stop("If type=Z,the format of dblm call must be as dblm.default or dblm.formula format")
+           stop("If type.var=Z,the format of dblm call must be as dblm.default or dblm.formula format")
          z<-data.frame(attr(object,"zs"))
          if (ncol(z)!=ncol(newdata)){
             stop(gettextf("The number of columns of the newdata %d, must be the same that %d (number of Z's columns)", 
@@ -49,9 +49,9 @@ predict.dbplsr <-function(object,newdata,type="Z",...){
     # recover y
     y<-object$y
     
-    if (type=="D2"){
+    if (type.var=="D2"){
      if (attr(object,"way")=="Z"||attr(object,"way")=="G")
-       stop("If type=D2,the format of dblm call must be as dblm.dist or dblm.D2 format") 
+       stop("If type.var=D2,the format of dblm call must be as dblm.dist or dblm.D2 format") 
       if (!is.matrix(newdata))
        newdata <- t(as.matrix(newdata))
       if (length(y)!=ncol(newdata)){
@@ -60,9 +60,9 @@ predict.dbplsr <-function(object,newdata,type="Z",...){
        }
     }
     
-    if (type=="G"){
+    if (type.var=="G"){
      if (attr(object,"way")=="Z"||attr(object,"way")=="D2")
-       stop("If type=G,the format of dblm call must be as dblm.Gram format") 
+       stop("If type.var=G,the format of dblm call must be as dblm.Gram format") 
       if (!is.matrix(newdata))
        newdata <- t(as.matrix(newdata))
       if ((length(y)+1)!=ncol(newdata)){
@@ -92,7 +92,7 @@ predict.dbplsr <-function(object,newdata,type="Z",...){
     gk <- onesk %*% t(g)
      
     # newdata for format Gram
-    if (type=="G"){
+    if (type.var=="G"){
         onesn<-as.matrix(rep(1:length(y)))
           newdata<- as.matrix(newdata[,ncol(newdata)])%*%t(onesn)+
           gk -2*newdata[,1:length(y)]

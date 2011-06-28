@@ -11,29 +11,29 @@
  ## 
  
 
-predict.dbglm <- function(object,newdata,type= c("link", "response"),
-                  type_var="Z",...){
+predict.dbglm <- function(object,newdata,type.pred= c("link", "response"),
+                  type.var="Z",...){
                   
      # stop if the object is not a dblm object.
      if (!inherits(object, "dbglm"))
         stop("use only with \"dbglm\" objects")
      
-     type <- match.arg(type)
+     type.pred <- match.arg(type.pred)
         
      # controls
      if (missing(newdata))
       stop("newdata matrix must be defined")
-     if (type_var!="Z"&&type_var!="D2"&&type_var!="G")
-      stop("type_var must be Z for explanatory values or D2 for square distance between individuals")
+     if (type.var!="Z"&&type.var!="D2"&&type.var!="G")
+      stop("type.var must be Z for explanatory values or D2 for square distance between individuals")
 
      if (class(newdata)[1]=="dist"|| class(newdata)[1]=="dissimilarity")
       newdata<-as.matrix(newdata)^2
 
      # if new data have the explanatory values of the new indiviudals
-     if (type_var=="Z"){
+     if (type.var=="Z"){
          newdata<-as.data.frame(newdata)
          if (attr(object,"way")=="D2"||attr(object,"way")=="G")
-           stop("If type_var=Z,the format of dbglm call must be as dbglm.default format")
+           stop("If type.var=Z,the format of dbglm call must be as dbglm.default format")
          z<-data.frame(attr(object,"zs"))
          if (ncol(z)!=ncol(newdata)){
             stop(gettextf("The number of columns of the newdata %d, must be the same that %d (number of Z's columns)",
@@ -67,20 +67,20 @@ predict.dbglm <- function(object,newdata,type= c("link", "response"),
     # recover y
     y<-object$y
     
-    if (type_var=="D2"){
+    if (type.var=="D2"){
      if (!is.matrix(newdata))
       newdata<-t(as.matrix(newdata))
      if (attr(object,"way")=="Z"||attr(object,"way")=="G")
-       stop("If type_var=D2,the format of dbglm call must be as dbglm.dist or dbglm.D2 format")  
+       stop("If type.var=D2,the format of dbglm call must be as dbglm.dist or dbglm.D2 format")  
      if (length(y)!=ncol(as.matrix(newdata))){
             stop(gettextf("The number of columns of the newdata %d, must be the same that %d (Distance dimensions)",
             ncol(newdata),length(y)))
        }
     }                                          
 
-    if (type_var=="G"){
+    if (type.var=="G"){
      if (attr(object,"way")=="Z"||attr(object,"way")=="D2")
-       stop("If type=G,the format of dblm call must be as dbglm.Gram format") 
+       stop("If type.var=G,the format of dblm call must be as dbglm.Gram format") 
       if (!is.matrix(newdata))
        newdata <- t(as.matrix(newdata))
       if ((length(y)+1)!=ncol(newdata)){
@@ -104,9 +104,9 @@ predict.dbglm <- function(object,newdata,type= c("link", "response"),
     }
 
    # prediction for new individuals
-   neweta <- predict(attr(object,"last_dblm"),newdata,type="D2")
+   neweta <- predict(attr(object,"last_dblm"),newdata,type.var="D2")
 
-   switch(type, response = {
+   switch(type.pred, response = {
                   fit <- object$family$linkinv(neweta)
                  },
                  link ={

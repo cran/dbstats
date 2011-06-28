@@ -37,7 +37,7 @@ Delicado, Pedro <pedro.delicado@upc.edu> and Fortiana, Josep <fortiana@ub.edu>
 
 X <- matrix(rnorm(100*3),nrow=100)
 D2 <- as.matrix(dist(X)^2)
-class(D2)<-"D2"
+class(D2) <- "D2"
 G <- D2toG(D2,weights=NULL)
 
 }

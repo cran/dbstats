@@ -7,7 +7,7 @@
 \alias{print.dbglm}
 
 \title{
-      Distance-based generalized linear models
+      Distance-based generalized linear models                                                                 
 }
 \description{
     \code{dbglm} is a variety of generalized linear model where explanatory 
@@ -26,21 +26,21 @@
 }
 \usage{
 
-\method{dbglm}{formula}(formula,data,family=gaussian,...,
-        metric="euclidean",weights,maxiter=100,eps1=1e-10,
-        eps2=1e-10,rel.gvar=0.95,eff.rank=NULL,offset,mustart=NULL) 
+\method{dbglm}{formula}(formula, data, family=gaussian, method ="GCV", full.search=TRUE,...,
+        metric="euclidean", weights, maxiter=100, eps1=1e-10,
+        eps2=1e-10, rel.gvar=0.95, eff.rank=NULL, offset, mustart=NULL, range.eff.rank) 
    
-\method{dbglm}{dist}(distance,y,family=gaussian,weights,
+\method{dbglm}{dist}(distance,y,family=gaussian, method ="GCV", full.search=TRUE, weights,
         maxiter=100,eps1=1e-10,eps2=1e-10,rel.gvar=0.95,eff.rank=NULL,
-        offset,mustart=NULL,...)
+        offset,mustart=NULL, range.eff.rank,...)
                 
-\method{dbglm}{D2}(D2,y,...,family=gaussian,weights,maxiter=100,
+\method{dbglm}{D2}(D2,y,...,family=gaussian, method ="GCV", full.search=TRUE, weights,maxiter=100,
         eps1=1e-10,eps2=1e-10,rel.gvar=0.95,eff.rank=NULL,offset,
-        mustart=NULL)
+        mustart=NULL, range.eff.rank)
 
-\method{dbglm}{Gram}(G,y,...,family=gaussian,weights,maxiter=100,
+\method{dbglm}{Gram}(G,y,...,family=gaussian, method ="GCV", full.search=TRUE, weights,maxiter=100,
         eps1=1e-10,eps2=1e-10,rel.gvar=0.95,eff.rank=NULL,
-        offset,mustart=NULL)              
+        offset,mustart=NULL, range.eff.rank)              
 }              
 \arguments{
 
@@ -78,6 +78,7 @@
 	  function or the result of a call to a family function. 
 	  (See \code{\link{family}} for details of family functions.)
 }
+
   \item{metric}{
       metric function to be used when computing distances from observed 
 	  explanatory variables. 
@@ -89,6 +90,31 @@
 	   fitting process. 
 	   By default all individuals have the same weight.  
 }
+   \item{method}{
+      sets the method to be used in deciding the \emph{effective rank}, 
+	  which is defined as the number of linearly independent Euclidean 
+	  coordinates used in prediction. 
+	  There are five different methods: \code{"AIC"}, \code{"BIC"}, 
+	   \code{"GCV"}(default), \code{"eff.rank"} and 
+	  \code{"rel.gvar"}.
+     \code{GCV} take the effective rank minimizing 
+	  a cross-validatory quantity. 
+      \code{AIC} and \code{BIC} take the effective rank minimizing,
+	  respectively, the Akaike or Bayesian Information Criterion 
+	  (see \code{\link{AIC}} for more details). 
+}
+  \item{full.search}{sets which optimization procedure will be used to
+	minimize the modelling criterion specified in \code{method}.
+    Needs to be specified only if \code{method} is \code{"AIC"}, 
+	\code{"BIC"} or \code{"GCV"}. 
+    If \code{full.search=TRUE}, \emph{effective rank} is set to its
+	global best value, after evaluating the criterion for all possible ranks.
+	Potentially too computationally expensive.
+    If \code{full.search=FALSE}, the \code{\link{optimize}} function 
+	is called. Then computation time is shorter, but the result may be 
+	found a local minimum. 
+      
+}  
   \item{maxiter}{
       maximum number of iterations in the iterated \code{dblm} algorithm. 
 	  (Default = 100) 
@@ -126,7 +152,13 @@
 }
   \item{mustart}{
       starting values for the vector of means.  
+}              
+  \item{range.eff.rank}{
+      vector of size two defining the range of values for the effective rank with which the dblm iterations
+      will be evaluated (must be specified when \code{method} is \code{"AIC"}, \code{"BIC"} or \code{"GCV"}). The range should 
+      be restrict between \code{c(1,n-1)}.   
 }      
+ 
   \item{\dots}{
     arguments passed to or from other methods to the low level. 
 }
@@ -159,7 +191,7 @@
 		twice the difference between the maximum achievable log-likelihood and
         that achieved by the current model.}
   
-  \item{aic.model }{A version of Akaike's Information Criterion. Equal to minus
+  \item{aic.model }{a version of Akaike's Information Criterion. Equal to minus
 					twice the maximized log-likelihood plus twice the number of
 					parameters. Computed by the aic component of the family. 
 					For binomial and Poison families the dispersion is fixed at
@@ -170,8 +202,16 @@
           of the dispersion is used so this is a valid value of AIC, but for
           Gamma and inverse gaussian families it is not. For families fitted by 
           quasi-likelihood the value is NA. }
-  
-  \item{null.deviance }{ the deviance for the null model. The null model will 
+          
+   \item{bic.model }{a version of the Bayessian Information Criterion. Equal to 
+          minus twice the maximized log-likelihood plus the logarithm of the 
+          number of observations by the number of parameters (see, e.g.,
+          Wood 2006).}
+          
+   \item{gcv.model }{a version of the Generalized Cross-Validation Criterion. We
+         refer to Wood (2006) pp. 177-178 for details.}
+         
+  \item{null.deviance }{the deviance for the null model. The null model will 
 		include the offset, and an intercept if there is one in the model. 
 		Note that this will be incorrect if the link function depends on 
 		the data other than through the fitted mean: specify a zero offset 
@@ -195,13 +235,19 @@
 		\code{"maxiter"} (maximum allowed number of iterations 
 		has been exceeded).}
 
-  \item{H }{ hat matrix projector of the last \code{dblm} iteration.}
+  \item{H }{hat matrix projector of the last \code{dblm} iteration.}
   
   \item{rel.gvar }{the relative geometric variabiliy in the last \code{dblm} iteration.}
 
   \item{eff.rank }{the \code{working} effective rank, that is the \code{eff.rank}
 		in the last \code{dblm} iteration.}
-
+		
+  \item{varmu }{vector of estimated variance of each observation.}
+		
+  \item{dev.resids }{deviance residuals}
+	
+  \item{call }{the matched call.} 
+	
   Objects of class \code{"dbglm"} are actually of class 
   \code{c("dbglm", "dblm")}, inheriting the \code{\link{plot.dblm}} method
    from class \code{"dblm"}.
@@ -225,6 +271,9 @@ Cuadras CM (1989). \emph{Distance analysis in discrimination and classification 
 continuous and categorical variables}. In: Y. Dodge (ed.), \emph{Statistical Data Analysis and Inference}.		
 Amsterdam, The Netherlands: North-Holland Publishing Co., pp. 459-473.
 
+Wood SN (2006). \emph{Generalized Additive Models: An Introduction with R}. Chapman & Hall,
+Boca Raton.
+
 }
 \author{
 Boj, Eva <evaboj@ub.edu>, Caballe, Adria <adria.caballe@upc.edu>,
@@ -245,10 +294,10 @@ Delicado, Pedro <pedro.delicado@upc.edu> and Fortiana, Josep <fortiana@ub.edu>
 ## CASE POISSON
 z <- rnorm(100)
 y <- rpois(100, exp(1+z))
-glm1<-glm(y ~z, family=poisson(link = "log"))
-D2<-as.matrix(dist(z))^2
-class(D2)<-"D2"
-dbglm1<-dbglm.D2(D2,y,family=poisson(link = "log"))
+glm1 <- glm(y ~z, family = poisson(link = "log"))
+D2 <- as.matrix(dist(z))^2
+class(D2) <- "D2"
+dbglm1 <- dbglm(D2,y,family = poisson(link = "log"), method="rel.gvar")
 
 plot(z,y)
 points(z,glm1$fitted.values,col=2)
@@ -259,10 +308,10 @@ sum((dbglm1$fitted.values-y)^2)
 ## CASE BINOMIAL
 y <- rbinom(100, 1, plogis(z))
 # needs to set a starting value for the next fit
-glm2<-glm(y ~z, family=binomial(link = "logit"))
-D2<-as.matrix(dist(z))^2
-class(D2)<-"D2"
-dbglm2<-dbglm.D2(D2,y,family=binomial(link = "logit"))
+glm2 <- glm(y ~z, family = binomial(link = "logit"))
+D2 <- as.matrix(dist(z))^2
+class(D2) <- "D2"
+dbglm2 <- dbglm(D2,y,family = binomial(link = "logit"), method="rel.gvar")
 
 plot(z,y)
 points(z,glm2$fitted.values,col=2)

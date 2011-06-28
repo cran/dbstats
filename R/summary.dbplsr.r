@@ -71,7 +71,7 @@ summary.dbplsr <-function(object,...)
     ans <- list(ncomp=ncomp,r.squared=R2,adj.r.squared=R2adj,call=z$call,residuals=wytit,
                   sigma=sigma,gvar=gvar,gvec=gvec,gvar.iter=gvar.iter,
                   method=object$method,crit.value=crit.value,
-                  ncomp_opt=object$ncomp_opt)
+                  ncomp.opt=object$ncomp.opt)
     class(ans)<-"summary.dbplsr"
 
     return(ans)

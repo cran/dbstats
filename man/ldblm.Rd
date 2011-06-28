@@ -7,6 +7,7 @@
 \alias{print.ldblm}
 
 
+
 \title{
    Local distance-based linear model
 }
@@ -36,21 +37,21 @@
 \usage{
 
 \method{ldblm}{formula}(formula,data,...,kind.of.kernel=1,
-        metric1="euclidean",metric2=metric1,method="GCV",weights,
-        user_h=NULL,h.range=NULL,noh=10,k.knn=3,rel.gvar=0.95,eff.rank=NULL)
+        metric1="euclidean",metric2=metric1,method.h="GCV",weights,
+        user.h=NULL,h.range=NULL,noh=10,k.knn=3,rel.gvar=0.95,eff.rank=NULL)
 
 \method{ldblm}{dist}(dist1,dist2=dist1,y,kind.of.kernel=1,
-        method="GCV",weights,user_h=quantile(dist1,.25),
+        method.h="GCV",weights,user.h=quantile(dist1,.25),
         h.range=quantile(as.matrix(dist1),c(.05,.5)),noh=10,
         k.knn=3,rel.gvar=0.95,eff.rank=NULL,...)  
 
-\method{ldblm}{D2}(D2_1,D2_2=D2_1,y,kind.of.kernel=1,method="GCV",
-        weights,user_h=quantile(D2_1,.25)^.5,
-        h.range=quantile(as.matrix(D2_1),c(.05,.5))^.5,noh=10,k.knn=3,
+\method{ldblm}{D2}(D2.1,D2.2=D2.1,y,kind.of.kernel=1,method.h="GCV",
+        weights,user.h=quantile(D2.1,.25)^.5,
+        h.range=quantile(as.matrix(D2.1),c(.05,.5))^.5,noh=10,k.knn=3,
         rel.gvar=0.95,eff.rank=NULL,...) 
          
-\method{ldblm}{Gram}(G1,G2=G1,y,kind.of.kernel=1,method="GCV",
-        weights,user_h=NULL,h.range=NULL,noh=10,k.knn=3,rel.gvar=0.95,
+\method{ldblm}{Gram}(G1,G2=G1,y,kind.of.kernel=1,method.h="GCV",
+        weights,user.h=NULL,h.range=NULL,noh=10,k.knn=3,rel.gvar=0.95,
         eff.rank=NULL,...)       
 }
 
@@ -85,28 +86,28 @@
    Distances between observations, used for fitting \code{\link{dblm}}. 
    Default \code{dist2=dist1}. 
 }
-  \item{D2_1}{
+  \item{D2.1}{
      a \code{D2} class object. Squared distances matrix between individuals. 
    One of the alternative ways of entering distance information
    to a function. See the Details section in \code{\link{dblm}}.
    See above \code{dist1} for explanation of its role in this function.
    
 }
-  \item{D2_2}{
+  \item{D2.2}{
      a \code{D2} class object. Squared distances between observations.
 	 One of the alternative ways of entering distance information
    to a function. See the Details section in \code{\link{dblm}}.
    See above \code{dist2} for explanation of its role in this function.
-   Default \code{D2_2=D2_1}. 
+   Default \code{D2.2=D2.1}. 
 }
   \item{G1}{
 	   a \code{Gram} class object. Doubly centered inner product matrix 
-	 associated with the squared distances matrix \code{D2_1}.
+	 associated with the squared distances matrix \code{D2.1}.
 		
 }
   \item{G2}{
      a \code{Gram} class object. Doubly centered inner product matrix 
-	 associated with the squared distances matrix \code{D2_2}.
+	 associated with the squared distances matrix \code{D2.2}.
 	 Default \code{G2=G1}
 }
   \item{kind.of.kernel}{
@@ -128,28 +129,28 @@
 	One of \code{"euclidean"} (default), \code{"manhattan"}, 
 	or \code{"gower"}. 
 }
-  \item{method}{
+  \item{method.h}{
      sets the method to be used in deciding the \emph{optimal bandwidth h}.
 	 There are five different methods, \code{AIC}, \code{BIC}, \code{OCV}, 
-	 \code{GCV} (default) and \code{user_h}. 
+	 \code{GCV} (default) and \code{user.h}. 
    \code{OCV} and \code{GCV} take the optimal bandwidth minimizing 
 	 a cross-validatory quantity (either \code{ocv} or \code{gcv}).  
    \code{AIC} and \code{BIC} take the optimal bandwidth minimizing,
 	 respectively, the Akaike or Bayesian Information Criterion 
 	(see \code{\link{AIC}} for more details). 
-	   When method is \code{user_h}, the bandwidth is explicitly
-	 set by the user through the \code{user_h} optional parameter 
+	   When \code{method.h} is \code{user.h}, the bandwidth is explicitly
+	 set by the user through the \code{user.h} optional parameter 
 	 which, in this case, becomes mandatory.   
 }
   \item{weights}{
      an optional numeric vector of weights to be used in the fitting process. 
 	 By default all individuals have the same weight.  
 }
-  \item{user_h}{
-    global bandwidth \code{user_h}, set by the user, controlling the size 
+  \item{user.h}{
+    global bandwidth \code{user.h}, set by the user, controlling the size 
     of the local neighborhood of Z.
     Smoothing parameter (Default: 1st quartile of all the distances 
-    d(i,j) in \code{dist1}). Applies only if \code{method="user_h"}.
+    d(i,j) in \code{dist1}). Applies only if \code{method.h="user.h"}.
 }
   \item{h.range}{
     a vector of length 2 giving the range for automatic bandwidth 
@@ -157,7 +158,7 @@
 }
   \item{noh}{
     number of bandwidth \code{h} values within \code{h.range} for 
-  automatic bandwidth choice (if \code{method!="user_h"}).
+  automatic bandwidth choice (if \code{method.h!="user.h"}).
 }
  \item{k.knn}{
 	minimum number of observations with positive weight
@@ -197,7 +198,7 @@
 	bandwidth choice is defined by \code{h.range} and \code{noh}, 
 	together with \code{k.knn}. For each \code{h} in it a local linear 
 	model is fitted and the optimal \code{h} is decided according to the 
-	statistic specified in \code{method}.
+	statistic specified in \code{method.h}.
  
 	\code{kind.of.kernel} designates which kernel function is to be used
 	in determining individual weights from \code{dist1} values. 
@@ -208,8 +209,8 @@
  
   \item{residuals }{the residuals (response minus fitted values).} 
   \item{fitted.values }{the fitted mean values.}
-  \item{h_opt }{the optimal bandwidth h used in the fitting proces 
-      (\code{if method!=user_h}).} 
+  \item{h.opt }{the optimal bandwidth h used in the fitting proces 
+      (\code{if method.h!=user.h}).} 
   \item{S }{the Smoother hat projector.}
   \item{weights }{the specified weights.}
   \item{y }{the response variable used.}
@@ -274,11 +275,11 @@ e <- rnorm(n)*s
 
 y <- Z\%*\%b1 + Z^2\%*\%b2 +Z^3\%*\%b3 + e
 
-D2<-as.matrix(dist(Z)^2)
-class(D2)<-"D2"
+D2 <- as.matrix(dist(Z)^2)
+class(D2) <- "D2"
 
-ldblm1<-ldblm(y~Z,kind.of.kernel=1,method="GCV",noh=3,k.knn=3)
-ldblm2<-ldblm.D2(D2_1=D2,D2_2=D2,y,kind.of.kernel=1,method="user_h",k.knn=3)
+ldblm1 <- ldblm(y~Z,kind.of.kernel=1,method="GCV",noh=3,k.knn=3)
+ldblm2 <- ldblm(D2.1=D2,D2.2=D2,y,kind.of.kernel=1,method="user.h",k.knn=3)
  
  
  

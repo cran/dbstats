@@ -15,7 +15,7 @@
 
 
 predict.ldblm<-function(object,newdata1,newdata2=newdata1,new.k.knn=3,
-      type="Z",...){
+      type.var="Z",...){
 
      # stop if the object is not a dblm object.
      if (!inherits(object, "ldblm"))
@@ -23,8 +23,8 @@ predict.ldblm<-function(object,newdata1,newdata2=newdata1,new.k.knn=3,
 
      y<-object$y
      # controls of newdata
-     if (type!="Z"&&type!="D2"&&type!="G")
-      stop("type must be Z for explanatory values, D2 for square distance between individuals or G for centered Euclidean configuration")
+     if (type.var!="Z"&&type.var!="D2"&&type.var!="G")
+      stop("type.var must be Z for explanatory values, D2 for square distance between individuals or G for centered Euclidean configuration")
      if (missing(newdata1))
       stop("newdata1 matrix must be defined")  
 
@@ -35,9 +35,9 @@ predict.ldblm<-function(object,newdata1,newdata2=newdata1,new.k.knn=3,
      if (class(newdata2)[1]=="dist"|| class(newdata2)[1]=="dissimilarity")
       newdata2<-as.matrix(newdata2)^2
           
-     if (type=="Z"){
+     if (type.var=="Z"){
         if (attr(object,"way")=="G"||attr(object,"way")=="D2")
-        stop("If type=Z,the format of dblm call must be as ldblm.dist format")
+        stop("If type.var=Z,the format of dblm call must be as ldblm.dist format")
        newdata1<-as.data.frame(newdata1) 
        nr <- nrow(newdata1)
        nc <- ncol(newdata1) 
@@ -85,9 +85,9 @@ predict.ldblm<-function(object,newdata1,newdata2=newdata1,new.k.knn=3,
         newdata2<-t(as.matrix(newdata2))
      } 
            
-     if (type=="D2"){
+     if (type.var=="D2"){
        if (attr(object,"way")=="Z"||attr(object,"way")=="G")
-        stop("If type=D2,the format of ldblm call must be as ldblm.dist format") 
+        stop("If type.var=D2,the format of ldblm call must be as ldblm.dist format") 
       if (!is.matrix(newdata1))
          newdata1<-t(as.matrix(newdata1))
       if (!is.null(newdata2)){ 
@@ -97,9 +97,9 @@ predict.ldblm<-function(object,newdata1,newdata2=newdata1,new.k.knn=3,
        newdata2<-newdata1   
     }
     
-     if (type=="G"){
+     if (type.var=="G"){
        if (attr(object,"way")=="Z"||attr(object,"way")=="D2")
-        stop("If type=G,the format of ldblm call must be as ldblm.Gram format") 
+        stop("If type.var=G,the format of ldblm call must be as ldblm.Gram format") 
       if (!is.matrix(newdata1))
          newdata1<-t(as.matrix(newdata1))
       if (!is.null(newdata2)){ 
@@ -139,7 +139,7 @@ predict.ldblm<-function(object,newdata1,newdata2=newdata1,new.k.knn=3,
      stop("number of newdata2 columns must be the same as in dist2 of ldblm object")  
 
     # bandwidth h_opt  and kind of kernel of ldblm object
-    h_opt<-object$h_opt
+    h.opt<-object$h.opt
     kind.of.kernel<-attr(object,"kind.of.kernel")
      
     # max between the minimum bandwidth h.knn.new 
@@ -148,7 +148,7 @@ predict.ldblm<-function(object,newdata1,newdata2=newdata1,new.k.knn=3,
       new.h.knn<-h.knn.funct(newdata1^.5,k=new.k.knn) 
     else
      stop(" new.k.knn must be >1")    
-    hi<-pmax(new.h.knn+1e-10,object$h_opt)
+    hi<-pmax(new.h.knn+1e-10,object$h.opt)
          
     # initialize n, y, fit, newS, newShat and recover S
     n<-length(object$fitted.values)
@@ -181,8 +181,8 @@ predict.ldblm<-function(object,newdata1,newdata2=newdata1,new.k.knn=3,
        # call dblm linear model to achieve the fitted values yhat and the Hat 
        # matrix Hhat for the i observation
        dblmaux <- dblm.D2(y=y_aux,D2=dist2_aux,weights=weights[iid]*weights_aux,method=method,#"OCV",
-                    rel.gvar=rel.gvar,eff.rank=eff.rank_aux)#,full_search=T)
-       fit[i]<-predict(dblmaux,newdata=newdataaux,type="D2")
+                    rel.gvar=rel.gvar,eff.rank=eff.rank_aux)#,full.search=T)
+       fit[i]<-predict(dblmaux,newdata=newdataaux,type.var="D2")
     }
 
     ans<-list(fit=fit,newS=newS)

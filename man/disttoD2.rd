@@ -34,7 +34,7 @@ Delicado, Pedro <pedro.delicado@upc.edu> and Fortiana, Josep <fortiana@ub.edu>
 \examples{
 
 X <- matrix(rnorm(100*3),nrow=100)
-distance<-daisy(X,"manhattan")
+distance <- daisy(X,"manhattan")
 D2 <- disttoD2(distance)
 
 }

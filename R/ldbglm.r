@@ -23,8 +23,10 @@
  ldbglm<-function(...)  UseMethod("ldbglm")
  
  ldbglm.formula<-function(formula,data,...,family=gaussian(),kind.of.kernel=1,
-                    metric1="euclidean",metric2=metric1,method="GCV",weights,
-                    user_h=NULL,h.range=NULL,noh=10,k.knn=3,
+                    metric1="euclidean",metric2=metric1,
+                    method.h="GCV",
+                    weights,
+                    user.h=NULL,h.range=NULL,noh=10,k.knn=3,
                     rel.gvar=0.95,eff.rank=NULL,maxiter=100,eps1=1e-10,
                     eps2=1e-10)
 {
@@ -46,8 +48,8 @@
   
   # y and z are defined--> pass to default method (try for avoid the program crash).
   try(ans <- ldbglm.yz(y=zy$y,z=zy$z,family=family,kind.of.kernel=kind.of.kernel,
-        metric1=metric1,metric2=metric2,user_h=user_h,
-        h.range=h.range,noh=noh,k.knn=k.knn,method=method,weights=weights,
+        metric1=metric1,metric2=metric2,user.h=user.h,
+        h.range=h.range,noh=noh,k.knn=k.knn,method.h=method.h,weights=weights,
         rel.gvar=rel.gvar,eff.rank=eff.rank,maxiter=maxiter,eps1=eps1,eps2=eps2)) 
   if (class(ans)[1]=="try-error")
    return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
@@ -65,14 +67,14 @@
     ################################
 
 ldbglm.yz<-function(y,z,family=gaussian(),kind.of.kernel=1,
-                  metric1="euclidean",metric2=metric1,method="GCV",weights,
-                  user_h=NULL,h.range=NULL,noh=10,k.knn=3,rel.gvar=0.95,
+                  metric1="euclidean",metric2=metric1,method.h="GCV",weights,
+                  user.h=NULL,h.range=NULL,noh=10,k.knn=3,rel.gvar=0.95,
                   eff.rank=NULL,maxiter=100,eps1=1e-10,eps2=1e-10,...)
 {
 
    call <- match.call(expand.dots = FALSE)
    # See if z or distance matrix is defined by the user.
-   require(cluster)
+   # require(cluster)
 
    # control metric. See the auxiliar function
    metric1 <- control_metric(metric1)
@@ -86,20 +88,20 @@ ldbglm.yz<-function(y,z,family=gaussian(),kind.of.kernel=1,
   
    # if metric=gower. the distance matrix D is already the squared.
    if (metric1=="gower")
-    D2_1 <-as.matrix(dist1)
+    D2.1 <-as.matrix(dist1)
    else
-    D2_1 <-as.matrix(dist1)^2 
+    D2.1 <-as.matrix(dist1)^2 
    if (metric2=="gower")
-    D2_2 <-as.matrix(dist2)
+    D2.2 <-as.matrix(dist2)
    else
-    D2_2 <-as.matrix(dist2)^2
+    D2.2 <-as.matrix(dist2)^2
      
-   class(D2_1) <- "D2"
-   class(D2_2) <- "D2"   
+   class(D2.1) <- "D2"
+   class(D2.2) <- "D2"   
    
-   try(ans <- ldbglm.D2(D2_1=D2_1,D2_2=D2_2,y=y,family=family,kind.of.kernel=kind.of.kernel,
-      user_h=user_h,h.range=h.range,noh=noh,k.knn=k.knn,
-      method=method,weights=weights,rel.gvar=rel.gvar,eff.rank=eff.rank,maxiter=maxiter,
+   try(ans <- ldbglm.D2(D2.1=D2.1,D2.2=D2.2,y=y,family=family,kind.of.kernel=kind.of.kernel,
+      user.h=user.h,h.range=h.range,noh=noh,k.knn=k.knn,
+      method.h=method.h,weights=weights,rel.gvar=rel.gvar,eff.rank=eff.rank,maxiter=maxiter,
       eps1=eps1,eps2=eps2)) 
       
    if (class(ans)[1]=="try-error") 
@@ -124,7 +126,7 @@ ldbglm.yz<-function(y,z,family=gaussian(),kind.of.kernel=1,
     #################################
 
 ldbglm.dist<- function(dist1,dist2=dist1,y,family=gaussian(),kind.of.kernel=1,
-          method="GCV",weights,user_h=quantile(dist1,.25),
+          method.h="GCV",weights,user.h=quantile(dist1,.25),
           h.range=quantile(as.matrix(dist1),c(.05,0.5)),noh=10,k.knn=3,
           rel.gvar=0.95,eff.rank=NULL,maxiter=100,eps1=1e-10,eps2=1e-10,...){
          
@@ -138,9 +140,9 @@ ldbglm.dist<- function(dist1,dist2=dist1,y,family=gaussian(),kind.of.kernel=1,
    Delta1 <- disttoD2(dist1)     
    Delta2 <- disttoD2(dist2)     
  
-    try(ans <- ldbglm.D2(D2_1=Delta1,D2_2=Delta2,y=y,kind.of.kernel=kind.of.kernel,
-          user_h=user_h,family=family,h.range=h.range,noh=noh,k.knn=k.knn,
-          method=method,weights=weights,rel.gvar=rel.gvar,eff.rank=eff.rank,maxiter=maxiter,
+    try(ans <- ldbglm.D2(D2.1=Delta1,D2.2=Delta2,y=y,kind.of.kernel=kind.of.kernel,
+          user.h=user.h,family=family,h.range=h.range,noh=noh,k.knn=k.knn,
+          method.h=method.h,weights=weights,rel.gvar=rel.gvar,eff.rank=eff.rank,maxiter=maxiter,
           eps1=eps1,eps2=eps2))
    if (class(ans)[1]=="try-error") 
      return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
@@ -157,14 +159,14 @@ ldbglm.dist<- function(dist1,dist2=dist1,y,family=gaussian(),kind.of.kernel=1,
     ####  dbglm with D2 distance ####
     #################################
 
-ldbglm.D2<-function(D2_1,D2_2=D2_1,y,family=gaussian(),kind.of.kernel=1,
-             method="GCV",weights,user_h=quantile(D2_1,.25)^.5,
-             h.range=quantile(as.matrix(D2_1),c(.05,0.5))^.5,noh=10,
+ldbglm.D2<-function(D2.1,D2.2=D2.1,y,family=gaussian(),kind.of.kernel=1,
+             method.h="GCV",weights,user.h=quantile(D2.1,.25)^.5,
+             h.range=quantile(as.matrix(D2.1),c(.05,0.5))^.5,noh=10,
              k.knn=3,rel.gvar=0.95,eff.rank=NULL,maxiter=100,eps1=1e-10,
              eps2=1e-10,...){
 
    # control method. See the auxiliar function
-   method<-control_method(method,"ldbglm")
+   method.h <-control_method(method.h,"ldbglm")
    
    # reconsidering 'y' if row(y)=2
    if (NCOL(as.matrix(y)) == 2) {
@@ -175,9 +177,9 @@ ldbglm.D2<-function(D2_1,D2_2=D2_1,y,family=gaussian(),kind.of.kernel=1,
    } 
     
    # another controls: see the auxiliar function
-   controls <- controls_ldblm(D2_1,D2_2,user_h,method,h.range,noh,k.knn,
+   controls <- controls_ldblm(D2.1,D2.2,user.h,method.h,h.range,noh,k.knn,
            kind.of.kernel,y,weights)
-   user_h <- controls$user_h
+   user.h <- controls$user.h
    h.range <- controls$h.range
    weights <- controls$weights
    ori_weights <- weights
@@ -187,27 +189,26 @@ ldbglm.D2<-function(D2_1,D2_2=D2_1,y,family=gaussian(),kind.of.kernel=1,
    family <-control_family(family)
    
    # sequence of bandwidth to be evaluate
-   if (method!="user_h"){
+   if (method.h!="user.h"){
       h_low <- h.range[1]
       h_up <- h.range[2]
       h_vec <- exp(seq(log(h_low),log(h_up),length=noh))
    }
    n <- nrow(as.matrix(y))
 
-   h.knn<-h.knn.funct(D2_1^.5,k=k.knn)
+   h.knn<-h.knn.funct(D2.1^.5,k=k.knn)
 
-   # compute the model for each method
-   if (method!="user_h"){
+   # compute the model for each method.h
+   if (method.h!="user.h"){
    
-    if (method=="OCV") OCV <- rep(0,noh)  # OCV's for each h(only if method==OCV)
-    if (method=="GCV") GCV <- rep(0,noh)  # GCV's for each h(only if method==GCV)
-    if (method=="AIC") AIC <- rep(0,noh)  # AIC's for each h(only if method==AIC)
-    if (method=="BIC") BIC <- rep(0,noh)  # BIC's for each h(only if method==BIC)
+    if (method.h=="GCV") GCV <- rep(0,noh)  # GCV's for each h(only if method.h==GCV)
+    if (method.h=="AIC") AIC <- rep(0,noh)  # AIC's for each h(only if method.h==AIC)
+    if (method.h=="BIC") BIC <- rep(0,noh)  # BIC's for each h(only if method.h==BIC)
     
     i <- 0
     for (h in h_vec){
       # fitted values and Shat for each bandwidth (h)
-      aux <-pred.train.sample.dbglm(y=y,dist1=D2_1,dist2=D2_1,n=n,h=h,h.knn=h.knn,
+      aux <-pred.train.sample.dbglm(y=y,dist1=D2.1,dist2=D2.1,n=n,h=h,h.knn=h.knn,
               kind.of.kernel=kind.of.kernel,family=family,weights=ori_weights,
               rel.gvar=rel.gvar,eff.rank=eff.rank,maxiter=maxiter,eps1=eps1,
               eps2=eps2)   
@@ -216,45 +217,23 @@ ldbglm.D2<-function(D2_1,D2_2=D2_1,y,family=gaussian(),kind.of.kernel=1,
       S <- aux$Shat
       fitted.values <- aux$yhat
       diagS <- diag(S)
-      nu <- sum(diagS)
-
-      # Ordinary cross validation criterium to choose the best bandwidth.
-      if (method=="OCV"){
-        OCV[i] <-  sum(weights*((y-fitted.values)/(1-diagS))^2 ) # ocv formula
-        if (is.nan(OCV[i]))
-          stop(paste("OCV for the bandwidth ",round(h,5), " is a NaN. Try to use another method or h.range"))
-         
-         if (i==1){
-         OCV_opt <- OCV[i]
-         h_opt <- h
-         S_opt <- S
-         yhat_opt<-fitted.values
-        }else{
-         if (OCV_opt > OCV[i]){ # improve the best ocv
-            OCV_opt <- OCV[i]   # edit the ocv optim
-            h_opt <- h
-            S_opt <- S
-            yhat_opt<-fitted.values
-         }
-        }
-     }else OCV_opt<-NULL
+      nu <- sum(diagS); 
+      
 
      # Generalized cross validation criterium to choose the best bandwidth.
-      if (method=="GCV"){
+     # We follow formula (4.24) from the book of Wood (2006) "GLM with R"
+      if (method.h=="GCV"){
 
-        GCV[i] <-sum(weights*(fitted.values-y)^2)/(n*(1-nu/n)^2)   # gcv formula     
-        if (is.nan(GCV[i]))
-          stop(paste("GCV for the bandwidth ",round(h,5), " is a NaN. Try to use another method or h.range")) 
-      
+        GCV[i] <- sum(weights*aux$dev.resids)/(1-nu/n)^2  
         if (i==1){
-         GCV_opt <- GCV[i]
-         h_opt <- h
-         S_opt <- S
-         yhat_opt<-fitted.values
+          GCV_opt <- GCV[i]
+          h.opt <- h
+          S_opt <- S
+          yhat_opt<-fitted.values
         }else{
          if (GCV_opt > GCV[i]){   # improve the best gcv
             GCV_opt <- GCV[i]     # edit the gcv optim
-            h_opt <- h
+            h.opt <- h
             S_opt <- S
             yhat_opt<-fitted.values
          }
@@ -262,19 +241,19 @@ ldbglm.D2<-function(D2_1,D2_2=D2_1,y,family=gaussian(),kind.of.kernel=1,
      }else GCV_opt<-NULL
 
      # Aikaike criterium to choose the best bandwidth.
-      if (method=="AIC"){
-        rss<-sum(ori_weights*(fitted.values-y)^2)/n   # residual standard desviation
-        AIC[i]<-2*sum(diag(S))+n*log(rss)   # aic formula
+      if (method.h=="AIC"){
+        ssdr <-sum(weights*aux$dev.resids)  
+        AIC[i]<- ssdr + 2*nu  # aic formula
 
         if (i==1){
          AIC_opt <- AIC[i]
-         h_opt <- h
+         h.opt <- h
          S_opt <- S
          yhat_opt<-fitted.values
         }else{
          if (AIC_opt > AIC[i]){  # improve the best aic
             AIC_opt <- AIC[i]    # edit the aic optim
-            h_opt <- h
+            h.opt <- h
             S_opt <- S
             yhat_opt<-fitted.values
          }
@@ -282,42 +261,41 @@ ldbglm.D2<-function(D2_1,D2_2=D2_1,y,family=gaussian(),kind.of.kernel=1,
      }else AIC_opt<-NULL
 
      # Bayesian criterium to choose the best bandwidth.
-      if (method=="BIC"){
-        rss<-sum(ori_weights*(fitted.values-y)^2)/n       # residual standard desviation
-        BIC[i]<-n*log(rss)+log(n)*sum(diag(S))  # bic formula
-
+      if (method.h=="BIC"){
+        ssdr <-sum(weights*aux$dev.resids) 
+        BIC[i]<- ssdr + log(n)*nu  # bic formula 
         if (i==1){
          BIC_opt <- BIC[i]
-         h_opt <- h
+         h.opt <- h
          S_opt <- S
          yhat_opt<-fitted.values
         }else{
          if (BIC_opt > BIC[i]){      # improve the best bic
             BIC_opt <-BIC[i]         # edit the bic optim
-            h_opt <- h
+            h.opt <- h
             S_opt <- S
             yhat_opt<-fitted.values
          }
         }
        }else BIC_opt<-NULL
      }
+     S <- S_opt
     }
 
-    # if method=user_h --> the model is estimated with the h bandwidth 
+    # if method.h=user.h --> the model is estimated with the h bandwidth 
     # defined by the user
-    if (method=="user_h"){
-      # fitted values and Shat for user_h bandwidth
+    if (method.h=="user.h"){
+      # fitted values and Shat for user.h bandwidth
     
-      aux <-pred.train.sample.dbglm(y=y,dist1=D2_1,dist2=D2_2,n=n,h=user_h,
+      aux <-pred.train.sample.dbglm(y=y,dist1=D2.1,dist2=D2.2,n=n,h=user.h,
             h.knn=h.knn,kind.of.kernel=kind.of.kernel,family=family,
             weights=ori_weights,rel.gvar=rel.gvar,eff.rank=eff.rank,
             maxiter=maxiter,eps1=eps1,eps2=eps2)      
             
       S <- aux$Shat
       yhat_opt <- aux$yhat
-      h_opt<-user_h
+      h.opt<-user.h
 
-      OCV_opt<-NULL
       GCV_opt<-NULL
       AIC_opt<-NULL
       BIC_opt<-NULL
@@ -329,26 +307,24 @@ ldbglm.D2<-function(D2_1,D2_2=D2_1,y,family=gaussian(),kind.of.kernel=1,
 
     call<- match.call(expand.dots = FALSE)
     # return the next attributes
-    ans<-list(residuals=y-yhat_opt,fitted.values=yhat_opt,h_opt=h_opt,family=family,
-              y=y,S=S,weights=weights,call=call,dist1=D2_1,dist2=D2_2)
+    ans<-list(residuals=y-yhat_opt,fitted.values=yhat_opt,h.opt=h.opt,family=family,
+              y=y,S=S,weights=weights,call=call,dist1=D2.1,dist2=D2.2)
 
 
     attr(ans,"kind.of.kernel")<-kind.of.kernel
-    attr(ans,"method")<-method
-    attr(ans,"dist1")<-D2_1
-    attr(ans,"dist2")<-D2_2
+    attr(ans,"method.h")<-method.h
+    attr(ans,"dist1")<-D2.1
+    attr(ans,"dist2")<-D2.2
     attr(ans,"R2")<-R2
-    attr(ans,"OCV_opt")<-OCV_opt
     attr(ans,"GCV_opt")<-GCV_opt
     attr(ans,"AIC_opt")<-AIC_opt
     attr(ans,"BIC_opt")<-BIC_opt
     attr(ans,"noh")<-noh
     attr(ans,"way")<-"D2"
-    if (method!="user_h") attr(ans,"h_vec")<-h_vec
-    if (method=="OCV") attr(ans,"OCV")<-OCV
-    if (method=="GCV") attr(ans,"GCV")<-GCV
-    if (method=="AIC") attr(ans,"AIC")<-AIC
-    if (method=="BIC") attr(ans,"BIC")<-BIC
+    if (method.h!="user.h") attr(ans,"h_vec")<-h_vec
+    if (method.h=="GCV") attr(ans,"GCV")<-GCV
+    if (method.h=="AIC") attr(ans,"AIC")<-AIC
+    if (method.h=="BIC") attr(ans,"BIC")<-BIC
     attr(ans,"rel.gvar")<-rel.gvar
     attr(ans,"eff.rank")<-eff.rank
 
@@ -363,26 +339,26 @@ ldbglm.D2<-function(D2_1,D2_2=D2_1,y,family=gaussian(),kind.of.kernel=1,
     ####  ldbglm with Gram ####
     ###########################
 
-ldbglm.Gram <- function(G1,G2=G1,y,kind.of.kernel=1,user_h=NULL,
-             family=gaussian(),method="GCV",weights,h.range=NULL,noh=10,
+ldbglm.Gram <- function(G1,G2=G1,y,kind.of.kernel=1,user.h=NULL,
+             family=gaussian(),method.h="GCV",weights,h.range=NULL,noh=10,
              k.knn=3,rel.gvar=0.95,eff.rank=NULL,maxiter=100,eps1=1e-10,
              eps2=1e-10,...){
     
    # stop if class of distance matrix is not D2      
    if (class(G1)[1]!="Gram")
-    stop("for a ldbglm.Gram method the class of the distance matrix G1 must be 'Gram'")
+    stop("for a ldbglm.Gram method.h the class of the distance matrix G1 must be 'Gram'")
    if (class(G2)[1]!="Gram")
-    stop("for a ldbglm.Gram method the class of the distance matrix G2 must be 'Gram'")   
+    stop("for a ldbglm.Gram method.h the class of the distance matrix G2 must be 'Gram'")   
    
    # converts G to D2
-   D2_1 <- GtoD2(G1)
-   D2_2 <- GtoD2(G2) 
+   D2.1 <- GtoD2(G1)
+   D2.2 <- GtoD2(G2) 
    
    
-   # y and Distance are defined--> pass to dist method (try for avoid the program crash).
-   try(ans <- ldbglm.D2(D2_1=D2_1,D2_2=D2_2,y=y,kind.of.kernel=kind.of.kernel,
-          user_h=user_h,family=family,h.range=h.range,noh=noh,k.knn=k.knn,
-          method=method,weights=weights,rel.gvar=rel.gvar,eff.rank=eff.rank,maxiter=maxiter,
+   # y and Distance are defined--> pass to dist method.h (try for avoid the program crash).
+   try(ans <- ldbglm.D2(D2.1=D2.1,D2.2=D2.2,y=y,kind.of.kernel=kind.of.kernel,
+          user.h=user.h,family=family,h.range=h.range,noh=noh,k.knn=k.knn,
+          method.h=method.h,weights=weights,rel.gvar=rel.gvar,eff.rank=eff.rank,maxiter=maxiter,
           eps1=eps1,eps2=eps2))
    if (class(ans)=="try-error")
     return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
