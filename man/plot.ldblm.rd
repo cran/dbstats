@@ -82,11 +82,10 @@ e <- rnorm(n)*s
 
 y <- Z\%*\%b1 + Z^2\%*\%b2 +Z^3\%*\%b3 + e
 
-D<-as.matrix(dist(Z))
-D2<-D^2
+D2<-as.matrix(dist(Z))^2
 class(D2)<-"D2"
 
-ldblm1<-ldblm.D2(y,D2,dist2=D2,kind.of.kernel=1,method="AIC",noh=5,h.knn=NULL)
+ldblm1<-ldblm.D2(D2,y=y,kind.of.kernel=1,method="AIC",noh=5,h.knn=NULL)
 plot(ldblm1)
 plot(ldblm1,which=3)
 

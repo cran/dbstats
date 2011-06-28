@@ -49,14 +49,14 @@
    products matrix. 
  }
  \item{\dots}{
-    currently not used.
+        arguments passed to or from other methods to the low level. 
  }
 }
 \value{                
   A list of class \code{predict.ldblm} containing the following components: 
  
-  \item{fit }{predicted values for the k new individuals}
-  \item{Shat }{matrix (with dimension (k,n)) of weights used to compute the predictions} 
+  \item{fit }{predicted values for the k new individuals.}
+  \item{newS }{matrix (with dimension (k,n)) of weights used to compute the predictions.} 
 }
 \note{
     Look at which way (or \code{type}) was made the \code{ldblm} call. 

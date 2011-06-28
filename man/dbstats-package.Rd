@@ -66,7 +66,7 @@
 	Generalized linear and local generalized linear models with a numeric response:
     \itemize{
     \item \code{\link{dbglm}} for distance-based generalized linear models.
-    \item \code{\link{ldblm}} for local distance-based generalized linear models.  
+    \item \code{\link{ldbglm}} for local distance-based generalized linear models.  
     }
 	
 }
@@ -82,8 +82,8 @@ LazyLoad: \tab yes\cr
 
 }
 \author{
-Boj, Eva <evaboj@ub.edu>, Caballe, Adria <adria.caballe@upc.edu>,
-Delicado, Pedro <pedro.delicado@upc.edu> and Fortiana, Josep <fortiana@ub.edu>
+Boj, Eva <evaboj@ub.edu>, Caballe, Adria <adria.caballe@upc.edu>, Delicado, 
+ Pedro <pedro.delicado@upc.edu> and Fortiana, Josep <fortiana@ub.edu>
 
 }
 \references{

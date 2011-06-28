@@ -41,20 +41,18 @@
         rel.gvar=0.95,eff.rank=NULL,maxiter=100,eps1=1e-10,
         eps2=1e-10)
 
-# method for distance class 'dist' or 'dissimilary'
-ldbglm.dist(y,dist1,dist2=dist1,family=gaussian(),kind.of.kernel=1,
-        method="GCV",weights,user_h=quantile(dist1,.25)^.5,
-        h.range=quantile(as.matrix(dist1),c(.05,.25))^.5,noh=10,k.knn=3,
+\method{ldbglm}{dist}(dist1,dist2=dist1,y,family=gaussian(),kind.of.kernel=1,
+        method="GCV",weights,user_h=quantile(dist1,.25),
+        h.range=quantile(as.matrix(dist1),c(.05,.5)),noh=10,k.knn=3,
         rel.gvar=0.95,eff.rank=NULL,maxiter=100,eps1=1e-10,eps2=1e-10,...)
 
-#  method for distance class 'D2'
-ldbglm.D2(y,D2_1,D2_2=D2_1,family=gaussian(),kind.of.kernel=1,
-        method="GCV",weights,user_h=NULL,h.range=NULL,noh=10,
+\method{ldbglm}{D2}(D2_1,D2_2=D2_1,y,family=gaussian(),kind.of.kernel=1,
+        method="GCV",weights,user_h=quantile(D2_1,.25)^.5,
+        h.range=quantile(as.matrix(D2_1),c(.05,.5))^.5,noh=10,
         k.knn=3,rel.gvar=0.95,eff.rank=NULL,maxiter=100,eps1=1e-10,
         eps2=1e-10,...) 
 
-#  method for class 'Gram'
-ldbglm.Gram(y,G1,G2=G1,kind.of.kernel=1,user_h=NULL,
+\method{ldbglm}{Gram}(G1,G2=G1,y,kind.of.kernel=1,user_h=NULL,
         family=gaussian(),method="GCV",weights,h.range=NULL,noh=10,
         k.knn=3,rel.gvar=0.95,eff.rank=NULL,maxiter=100,eps1=1e-10,
         eps2=1e-10,...)                
@@ -207,7 +205,6 @@ ldbglm.Gram(y,G1,G2=G1,kind.of.kernel=1,user_h=NULL,
 }
   \item{\dots}{
     arguments passed to or from other methods to the low level. 
-    Currently not used.
 }    
 }
 \details{
@@ -243,7 +240,7 @@ ldbglm.Gram(y,G1,G2=G1,kind.of.kernel=1,user_h=NULL,
   \item{h_opt }{the optimal bandwidth \code{h} used in the fitting proces (\code{if method!=user_h}).} 
   \item{family }{the \code{\link{family}} object used.}
   \item{y }{the response variable used.}
-  \item{Shat }{the Smoothing hat projector.}
+  \item{S }{the Smoother hat projector.}
   \item{weights }{the specified weights.}
   \item{call }{the matched call.}
   \item{dist1 }{the distance matrix (object of class \code{"D2"} or \code{"dist"}) used to calculate the weights of the observations.}
@@ -300,9 +297,9 @@ Delicado, Pedro <pedro.delicado@upc.edu> and Fortiana, Josep <fortiana@ub.edu>
  class(D2)<-"D2"
  
  # Distance-based generalized linear model
- dbglm2<-dbglm.D2(y,D2,family=binomial(link = "logit"))
+ dbglm2<-dbglm.D2(D2,y,family=binomial(link = "logit"))
  # Local Distance-based generalized linear model
- ldbglm2<-ldbglm.D2(y,D2,family=binomial(link = "logit"),noh=3)
+ ldbglm2<-ldbglm.D2(D2,y=y,family=binomial(link = "logit"),noh=3)
  
  # check the difference of both
  sum((y-ldbglm2$fit)^2)

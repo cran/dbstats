@@ -26,6 +26,9 @@
     #### dblm of class formula ####
     ###############################
 
+     #generic function with a commun parameter (y).
+ dblm<-function(...)  UseMethod("dblm")
+ 
 dblm.formula <- function(formula,data,...,metric="euclidean",method="OCV",
                     full_search=FALSE,weights,rel.gvar=0.95,eff.rank) 
 {
@@ -45,7 +48,7 @@ dblm.formula <- function(formula,data,...,metric="euclidean",method="OCV",
         eff.rank=eff.rank,method=method,rel.gvar=rel.gvar,full_search=full_search))  
   
   if (class(ans)=="try-error") 
-    return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
+    return(paste("the program failed. Try to read the help. If the error persists attempts to communicate with us "))
   
   # call dbglm
   ans$call <- mf
@@ -78,11 +81,13 @@ dblm.yz <- function(y,z,metric="euclidean",method="OCV",full_search=FALSE,
     
   # if metric=gower. the distance matrix D is already the squared.
   if (metric=="gower"){
-     D <-as.matrix(D)
-     class(D) <- "D2"
-  }
+     D2 <-as.matrix(D)
+     class(D2) <- "D2"
+  }else
+     D2 <-disttoD2(D)
+    
   # y and Distance are defined--> pass to dist method (try for avoid crash). 
-  try(ans<-dblm.dist(y=y,distance=D,weights=weights,eff.rank=eff.rank,method=method,
+  try(ans<-dblm.D2(y=y,D2=D2,weights=weights,eff.rank=eff.rank,method=method,
                rel.gvar=rel.gvar,full_search=full_search)) 
    
    
@@ -101,41 +106,12 @@ dblm.yz <- function(y,z,metric="euclidean",method="OCV",full_search=FALSE,
   return(ans)
 }
 
-
-
-    #################################
-    ####  dblm with D2 distance ####
-    #################################
-    
-dblm.D2 <- function(y,D2,...,method="OCV",full_search=FALSE,weights,
-            rel.gvar=0.95,eff.rank)
-{  
-    # control method. See the auxiliar function
-    method<-control_method(method,"dblm")  
-   
-    if (class(D2)[1]!="D2") 
-     stop("for a dblm.D2 method the class of the distance matrix D2 must be 'D2'")
-    else
-      try(ans<-dblm.dist(y=y,distance=D2,weights=weights,eff.rank=eff.rank,
-                  method=method,rel.gvar=rel.gvar,full_search=full_search))
-    
-    if (class(ans)=="try-error")
-     return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
-    
-    ans$call<-match.call(expand.dots = FALSE)
-    attr(ans,"way")<-"D2"
-    
-    return(ans)
-}
-
-
-
     #################################
     ####    dblm with Dist or   ####
     ####  dissimilarity distance ####
     #################################
 
-dblm.dist <- function(y,distance,...,method="OCV",full_search=FALSE,weights,
+dblm.dist <- function(distance,y,...,method="OCV",full_search=FALSE,weights,
                 rel.gvar=0.95,eff.rank)
 {   
    call <- match.call(expand.dots = FALSE)                   
@@ -144,8 +120,31 @@ dblm.dist <- function(y,distance,...,method="OCV",full_search=FALSE,weights,
     stop("distance must be defined")
    
    # dist to D2
-   Delta <- disttoD2(distance)   
-       
+   Delta <- disttoD2(distance)     
+   
+   try(ans<-dblm.D2(D2=Delta,y=y,weights=weights,eff.rank=eff.rank,
+                  method=method,rel.gvar=rel.gvar,full_search=full_search))
+ 
+   if (class(ans)=="try-error")
+     return(paste("the program failed. Try to read the help. If the error persists attempts to communicate with us "))
+   
+   ans$call <- call
+   attr(ans,"way")<-"D2"   
+
+   return(ans)
+}
+
+
+    #################################
+    ####  dblm with D2 distance ####
+    #################################
+    
+dblm.D2 <- function(D2,y,...,method="OCV",full_search=FALSE,weights,
+            rel.gvar=0.95,eff.rank)
+{  
+   # control method. See the auxiliar function
+   method<-control_method(method,"dblm")  
+   
    # another program controls: See the auxiliar function
    y <- as.matrix(y)
    n <- nrow(y)
@@ -165,28 +164,29 @@ dblm.dist <- function(y,distance,...,method="OCV",full_search=FALSE,weights,
    weights <- weights/sum(weights) # percent weights !! 
    
    # G: inner products matrix (symmetrical G)
-   G <- Gcalc(n,weights,Delta) 
+   G <- Gcalc(n,weights,Delta=D2) 
    class(G)<-"Gram"
          
-   try(ans<-dblm.Gram(y,G,weights=ori_weights,eff.rank=eff.rank,
+   try(ans<-dblm.Gram(G=G,y=y,weights=ori_weights,eff.rank=eff.rank,
                   method=method,rel.gvar=rel.gvar,full_search=full_search))
-    
+                  
+ 
    if (class(ans)=="try-error")
      return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
-   
-   ans$call <- call
-   attr(ans,"way")<-"D2"
-   return(ans)
+    
+    ans$call<-match.call(expand.dots = FALSE)
+    attr(ans,"way")<-"D2"
+    
+    return(ans)
 }
- 
- 
+
 
     #############################
     ####    dblm with Gram   ####
     #############################
  
  
- dblm.Gram <- function(y,G,...,method="OCV",full_search=FALSE,weights,
+ dblm.Gram <- function(G,y,...,method="OCV",full_search=FALSE,weights,
               rel.gvar=0.95,eff.rank)
 {    
   
@@ -213,7 +213,6 @@ dblm.dist <- function(y,distance,...,method="OCV",full_search=FALSE,weights,
    y0 <- y - sum(weights*y)       # centered response varaible(y) 
    
    g <- diag(G)
-
 
    # important! definim el paramatre intern rk, té us sentit similar al eff.rank, 
    # l'unic és que facilita el càlcul del nou rank si s'usa un dels 4 metodes. 
@@ -359,7 +358,7 @@ dblm.dist <- function(y,distance,...,method="OCV",full_search=FALSE,weights,
    # weights (not percents)
 
    ans<-list(residuals=(y-fitted.values),fitted.values=fitted.values,
-             df.residuals=(n-1-eff.rank),weights=ori_weights,y=y,Hhat=Hw,
+             df.residuals=(n-1-eff.rank),weights=ori_weights,y=y,H=Hw,
              call=call,rel.gvar=used_rel.gvar,eff.rank=eff.rank,ocv=ocv,
              gcv=gcv,aic=aic,bic=bic)
    
@@ -382,6 +381,3 @@ dblm.dist <- function(y,distance,...,method="OCV",full_search=FALSE,weights,
    return(ans) 
 }
 
- #generic function with a commun parameter (y).
- dblm<-function(y,...)  
-  UseMethod("dblm")

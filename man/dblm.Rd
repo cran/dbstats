@@ -30,16 +30,13 @@
 \method{dblm}{formula}(formula,data,...,metric="euclidean",method="OCV",
         full_search=FALSE,weights,rel.gvar=0.95,eff.rank)
 
-# method for distance class 'dist' or 'dissimilary'
-dblm.dist(y,distance,...,method="OCV",full_search=FALSE,
+\method{dblm}{dist}(distance,y,...,method="OCV",full_search=FALSE,
         weights,rel.gvar=0.95,eff.rank)
 
-#  method for distance class 'D2'
-dblm.D2(y,D2,...,method="OCV",full_search=FALSE,weights,rel.gvar=0.95,
+\method{dblm}{D2}(D2,y,...,method="OCV",full_search=FALSE,weights,rel.gvar=0.95,
         eff.rank)
               
-#  method for class 'Gram'
-dblm.Gram(y,G,...,method="OCV",full_search=FALSE,weights,rel.gvar=0.95,
+\method{dblm}{Gram}(G,y,...,method="OCV",full_search=FALSE,weights,rel.gvar=0.95,
         eff.rank)
 }
 
@@ -133,7 +130,6 @@ dblm.Gram(y,G,...,method="OCV",full_search=FALSE,weights,rel.gvar=0.95,
 }
   \item{\dots}{
      arguments passed to or from other methods to the low level. 
-	 Currently not used.
 }
 }
 \details{
@@ -178,7 +174,7 @@ dblm.Gram(y,G,...,method="OCV",full_search=FALSE,weights,rel.gvar=0.95,
   \item{df.residuals }{the residual degrees of freedom.}
   \item{weights }{the specified weights.}
   \item{y }{the response used to fit the model.}
-  \item{Hhat }{the hat matrix projector.}
+  \item{H }{the hat matrix projector.}
   \item{call }{the matched call.} 
   \item{rel.gvar }{the relative geometric variabiliy, used to fit the model.}
   \item{eff.rank }{the dimensions chosen to estimate the model.}
@@ -234,7 +230,7 @@ y <- Z\%*\%b + e
 
 D<-dist(Z)
 
-dblm1<-dblm.dist(y,D)
+dblm1<-dblm.dist(D,y)
 lm1 <- lm(y~Z)
 # the same fitted values with the lm
 mean(lm1$fitted.values-dblm1$fitted.values)

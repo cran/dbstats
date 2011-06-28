@@ -39,19 +39,17 @@
         metric1="euclidean",metric2=metric1,method="GCV",weights,
         user_h=NULL,h.range=NULL,noh=10,k.knn=3,rel.gvar=0.95,eff.rank=NULL)
 
-# method for distance class 'dist' or 'dissimilary'
-ldblm.dist(y,dist1,dist2=dist1,kind.of.kernel=1,
-        method="GCV",weights,user_h=quantile(dist1,.25)^.5,
-        h.range=quantile(as.matrix(dist1),c(.05,0.5))^.5,noh=10,
+\method{ldblm}{dist}(dist1,dist2=dist1,y,kind.of.kernel=1,
+        method="GCV",weights,user_h=quantile(dist1,.25),
+        h.range=quantile(as.matrix(dist1),c(.05,.5)),noh=10,
         k.knn=3,rel.gvar=0.95,eff.rank=NULL,...)  
 
-#  method for distance class 'D2'
-ldblm.D2(y,D2_1,D2_2=D2_1,kind.of.kernel=1,method="GCV",
-        weights,user_h=NULL,h.range=NULL,noh=10,k.knn=3,rel.gvar=0.95,
-        eff.rank=NULL,...) 
+\method{ldblm}{D2}(D2_1,D2_2=D2_1,y,kind.of.kernel=1,method="GCV",
+        weights,user_h=quantile(D2_1,.25)^.5,
+        h.range=quantile(as.matrix(D2_1),c(.05,.5))^.5,noh=10,k.knn=3,
+        rel.gvar=0.95,eff.rank=NULL,...) 
          
-#  method for class 'Gram'
-ldblm.Gram(y,G1,G2=G1,kind.of.kernel=1,method="GCV",
+\method{ldblm}{Gram}(G1,G2=G1,y,kind.of.kernel=1,method="GCV",
         weights,user_h=NULL,h.range=NULL,noh=10,k.knn=3,rel.gvar=0.95,
         eff.rank=NULL,...)       
 }
@@ -184,8 +182,7 @@ ldblm.Gram(y,G1,G2=G1,kind.of.kernel=1,method="GCV",
 }  
   \item{\dots}{
     arguments passed to or from other methods to the low level. 
-    Currently not used.
-}    
+  }   
 }
 \details{
     There are two semi-metrics involved in local linear distance-based estimation:
@@ -213,7 +210,7 @@ ldblm.Gram(y,G1,G2=G1,kind.of.kernel=1,method="GCV",
   \item{fitted.values }{the fitted mean values.}
   \item{h_opt }{the optimal bandwidth h used in the fitting proces 
       (\code{if method!=user_h}).} 
-  \item{Shat }{the Smoothing hat projector.}
+  \item{S }{the Smoother hat projector.}
   \item{weights }{the specified weights.}
   \item{y }{the response variable used.}
   \item{call }{the matched call.}
@@ -241,8 +238,8 @@ Amsterdam, The Netherlands: North-Holland Publishing Co., pp. 459-473.
 
 }
 \author{
-Boj, Eva <evaboj@ub.edu>, Caballe, Adria <adria.caballe@upc.edu>,
-Delicado, Pedro <pedro.delicado@upc.edu> and Fortiana, Josep <fortiana@ub.edu>
+Boj, Eva <evaboj@ub.edu>, Caballe, Adria <adria.caballe@upc.edu>, Delicado, 
+ Pedro <pedro.delicado@upc.edu> and Fortiana, Josep <fortiana@ub.edu>
 }
 \note{
   Model fitting is repeated \code{n} times (\code{n=} number of observations)
@@ -281,7 +278,7 @@ D2<-as.matrix(dist(Z)^2)
 class(D2)<-"D2"
 
 ldblm1<-ldblm(y~Z,kind.of.kernel=1,method="GCV",noh=3,k.knn=3)
-ldblm2<-ldblm.D2(y,D2_1=D2,D2_2=D2,kind.of.kernel=1,method="user_h",k.knn=3)
+ldblm2<-ldblm.D2(D2_1=D2,D2_2=D2,y,kind.of.kernel=1,method="user_h",k.knn=3)
  
  
  

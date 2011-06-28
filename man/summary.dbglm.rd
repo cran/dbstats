@@ -23,7 +23,7 @@
    Either a single numerical value or \code{NULL} (the default)
  }
  \item{\dots}{
-    currently not used.
+    arguments passed to or from other methods to the low level. 
  }
 }
 
@@ -50,7 +50,10 @@
                        weights) divided by the residual degrees of freedom. }   
   \item{gvar }{	weighted geometric variability of the squared distance matrix. }
   \item{gvec }{	diagonal entries in weighted inner products matrix G. }                     
-                                  
+    \item{convcrit }{convergence criterion. One of: \code{"DevStat"} 
+		(stopping criterion 1), \code{"muStat"} (stopping criterion 2), 
+		\code{"maxiter"} (maximum allowed number of iterations 
+		has been exceeded).}                           
 }
 
 \references{

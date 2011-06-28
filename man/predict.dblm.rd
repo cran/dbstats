@@ -38,7 +38,7 @@
    inner products matrix.      
  }
  \item{\dots}{
-    currently not used.
+        arguments passed to or from other methods to the low level. 
  }
 }
 
@@ -96,7 +96,7 @@ D2<-disttoD2(D)
 D2_train<-D2[1:90,1:90]
 class(D2_train)<-"D2"
 
-dblm1<-dblm.D2(y[1:90],D2_train)
+dblm1<-dblm.D2(D2_train,y[1:90])
 
 newdata<-D2[91:100,1:90]
 predict(dblm1,newdata,type="D2")

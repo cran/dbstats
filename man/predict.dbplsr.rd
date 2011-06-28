@@ -37,7 +37,7 @@
    inner products matrix.      
  }
  \item{\dots}{
-    currently not used.
+        arguments passed to or from other methods to the low level. 
  }
 }
 

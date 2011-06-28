@@ -19,7 +19,7 @@
    an object of class \code{dblm}. Result of \code{\link{dblm}}.
  }
  \item{\dots}{
-    currently not used.
+    arguments passed to or from other methods to the low level. 
  } 
 }
 
@@ -34,8 +34,23 @@
   \item{call }{	the matched call. }
   \item{gvar }{	weighted geometric variability of the squared distance matrix. }
   \item{gvec }{	diagonal entries in weighted inner products matrix G. }
+  \item{method }{ method used to decide the \emph{effective rank}. }
+  \item{eff.rank}{
+      integer between 1 and the number of observations minus one. 
+  	  Number of Euclidean coordinates used for model fitting. Applies only  
+	  if \code{method="eff.rank"}.  
+  }
+  \item{rel.gvar}{
+      relative geometric variability (real between 0 and 1). Take the 
+	  lowest effective rank with a relative geometric variability higher 
+      or equal to \code{rel.gvar}. Default value (\code{rel.gvar=0.95}) 
+	  uses a 95\% of the total variability.
+      Applies only \code{rel.gvar} if \code{method="rel.gvar"}.
 }
+     \item{crit.value }{ value of criterion defined in \code{method}.}
 
+ }
+  
 \references{
 
 Boj E, Delicado P, Fortiana J (2010). \emph{Distance-based local linear regression for functional predictors}.

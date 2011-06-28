@@ -13,7 +13,8 @@
  
    In <- diag(nrow=n) # identity matrix
    onesn <- matrix(rep(1,n),nrow=n) #ones vector
-  
+   weights <- as.matrix(weights)
+   
    dw <-Delta%*%weights  # weighted average for each row of Delta
    vw <-t(weights)%*%dw  # scalar constant
 

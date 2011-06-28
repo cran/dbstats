@@ -53,10 +53,25 @@ summary.dbplsr <-function(object,...)
     
     # matched call
     call <-object$call
+    
+    # crit.value
+    if (object$method=="OCV")
+       crit.value<-object$ocv
+    if (object$method=="GCV")
+       crit.value<-object$gcv
+    if (object$method=="AIC")
+       crit.value<-object$aic
+    if (object$method=="BIC")
+       crit.value<-object$bic
+    if (object$method=="ncomp")
+       crit.value<-NULL
+    
 
     # list to be returned
     ans <- list(ncomp=ncomp,r.squared=R2,adj.r.squared=R2adj,call=z$call,residuals=wytit,
-                  sigma=sigma,gvar=gvar,gvec=gvec,gvar.iter=gvar.iter)
+                  sigma=sigma,gvar=gvar,gvec=gvec,gvar.iter=gvar.iter,
+                  method=object$method,crit.value=crit.value,
+                  ncomp_opt=object$ncomp_opt)
     class(ans)<-"summary.dbplsr"
 
     return(ans)

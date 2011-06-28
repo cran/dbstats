@@ -22,7 +22,7 @@
    Result of \code{\link{ldblm}} or \code{\link{ldbglm}}.
  }
   \item{\dots}{
-    currently not used.
+    arguments passed to or from other methods to the low level. 
  }                                                                              
 }
 
@@ -35,6 +35,13 @@
   \item{call }{	the matched call. }
   \item{residuals }{ the residuals (the response minus fitted values).}
   \item{family }{ the \code{\link{family}} object used.}
+  \item{kind.kernel }{ smoothing kernel function.}
+  \item{method }{ method used to decide the optimal bandwidth. }
+  \item{h_opt }{the optimal bandwidth h used in the fitting proces 
+      (\code{if method!=user_h}).} 
+  \item{crit.value }{ value of criterion defined in \code{method}.}
+
+ 
 }
 
 \references{

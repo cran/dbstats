@@ -41,10 +41,24 @@ summary.dblm <-function(object,...)
     
     # matched call
     call <-object$call
+   
+    crit.value<-NULL    
+    if (attr(object,"method")=="OCV")
+       crit.value<-object$ocv
+    if (attr(object,"method")=="GCV")
+       crit.value<-object$gcv
+    if (attr(object,"method")=="AIC")
+       crit.value<-object$aic
+    if (attr(object,"method")=="BIC")
+       crit.value<-object$bic
+
+   
     
     # list to be returned
     ans <- list(residuals=r,sigma=sigma,r.squared=R2,adj.r.squared=adjR2,
-            df.residuals=rdf,call=z$call,gvar=gvar,gvec=gvec)
+            df.residuals=rdf,call=z$call,gvar=gvar,gvec=gvec,
+            method=attr(object,"method"),eff.rank=object$eff.rank,
+            rel.gvar=object$rel.gvar,crit.value=crit.value)
     class(ans)<-"summary.dblm"
     
     return(ans)

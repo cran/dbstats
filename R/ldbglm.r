@@ -19,7 +19,10 @@
     #### dbglm of class formula ####
     ################################
 
-ldbglm.formula<-function(formula,data,...,family=gaussian(),kind.of.kernel=1,
+     #generic function with a commun parameter (y).
+ ldbglm<-function(...)  UseMethod("ldbglm")
+ 
+ ldbglm.formula<-function(formula,data,...,family=gaussian(),kind.of.kernel=1,
                     metric1="euclidean",metric2=metric1,method="GCV",weights,
                     user_h=NULL,h.range=NULL,noh=10,k.knn=3,
                     rel.gvar=0.95,eff.rank=NULL,maxiter=100,eps1=1e-10,
@@ -82,16 +85,19 @@ ldbglm.yz<-function(y,z,family=gaussian(),kind.of.kernel=1,
    way <- dist_and_way$way
   
    # if metric=gower. the distance matrix D is already the squared.
-   if (metric1=="gower"){
-    dist1 <-as.matrix(dist1)
-    class(dist1) <- "D2"
-   }
-   if (metric2=="gower"){
-    dist2 <-as.matrix(dist2)
-    class(dist2) <- "D2"
-   }     
+   if (metric1=="gower")
+    D2_1 <-as.matrix(dist1)
+   else
+    D2_1 <-as.matrix(dist1)^2 
+   if (metric2=="gower")
+    D2_2 <-as.matrix(dist2)
+   else
+    D2_2 <-as.matrix(dist2)^2
+     
+   class(D2_1) <- "D2"
+   class(D2_2) <- "D2"   
    
-   try(ans <- ldbglm.dist(y=y,dist1=dist1,dist2=dist2,family=family,kind.of.kernel=kind.of.kernel,
+   try(ans <- ldbglm.D2(D2_1=D2_1,D2_2=D2_2,y=y,family=family,kind.of.kernel=kind.of.kernel,
       user_h=user_h,h.range=h.range,noh=noh,k.knn=k.knn,
       method=method,weights=weights,rel.gvar=rel.gvar,eff.rank=eff.rank,maxiter=maxiter,
       eps1=eps1,eps2=eps2)) 
@@ -112,24 +118,27 @@ ldbglm.yz<-function(y,z,family=gaussian(),kind.of.kernel=1,
    return(ans)
 }
 
-
     #################################
-    ####  dbglm with D2 distance ####
+    ####    dbglm with Dist or   ####
+    ####  dissimilarity distance ####
     #################################
 
-ldbglm.D2<-function(y,D2_1,D2_2=D2_1,family=gaussian(),kind.of.kernel=1,
-             method="GCV",weights,user_h=NULL,h.range=NULL,noh=10,
-             k.knn=3,rel.gvar=0.95,eff.rank=NULL,maxiter=100,eps1=1e-10,
-             eps2=1e-10,...){
-
-   # stop if class of distance matrix is not D2
-   if (class(D2_1)[1]!="D2") 
-    stop("for a ldbglm.D2 method the class of the distance matrix D2_1 must be 'D2'")
-   if (class(D2_2)[1]!="D2") 
-    stop("for a ldbglm.D2 method the class of the distance matrix D2_2 must be 'D2'")
-
-   # y and Distance are defined--> pass to dist method (try for avoid the program crash).
-   try(ans <- ldbglm.dist(y=y,dist1=D2_1,dist2=D2_2,kind.of.kernel=kind.of.kernel,
+ldbglm.dist<- function(dist1,dist2=dist1,y,family=gaussian(),kind.of.kernel=1,
+          method="GCV",weights,user_h=quantile(dist1,.25),
+          h.range=quantile(as.matrix(dist1),c(.05,0.5)),noh=10,k.knn=3,
+          rel.gvar=0.95,eff.rank=NULL,maxiter=100,eps1=1e-10,eps2=1e-10,...){
+         
+   # stop if class of distance matrix is not dist
+   if (!any (class(dist1)=="dist")) 
+    stop("for a ldbglm.dist method the class of the distance matrix dist1 must be 'dist'")
+   if (!any (class(dist2)=="dist")) 
+    stop("for a ldbglm.dist method the class of the distance matrix dist2 must be 'dist'")
+   
+   # dist to D2
+   Delta1 <- disttoD2(dist1)     
+   Delta2 <- disttoD2(dist2)     
+ 
+    try(ans <- ldbglm.D2(D2_1=Delta1,D2_2=Delta2,y=y,kind.of.kernel=kind.of.kernel,
           user_h=user_h,family=family,h.range=h.range,noh=noh,k.knn=k.knn,
           method=method,weights=weights,rel.gvar=rel.gvar,eff.rank=eff.rank,maxiter=maxiter,
           eps1=eps1,eps2=eps2))
@@ -140,57 +149,20 @@ ldbglm.D2<-function(y,D2_1,D2_2=D2_1,family=gaussian(),kind.of.kernel=1,
    # hidden attributes
    attr(ans,"way")<-"D2"
    return(ans)
-}
+   
+ }
 
- 
- 
-    ###########################
-    ####  ldbglm with Gram ####
-    ###########################
 
-ldbglm.Gram <- function(y,G1,G2=G1,kind.of.kernel=1,user_h=NULL,
-             family=gaussian(),method="GCV",weights,h.range=NULL,noh=10,
+    #################################
+    ####  dbglm with D2 distance ####
+    #################################
+
+ldbglm.D2<-function(D2_1,D2_2=D2_1,y,family=gaussian(),kind.of.kernel=1,
+             method="GCV",weights,user_h=quantile(D2_1,.25)^.5,
+             h.range=quantile(as.matrix(D2_1),c(.05,0.5))^.5,noh=10,
              k.knn=3,rel.gvar=0.95,eff.rank=NULL,maxiter=100,eps1=1e-10,
              eps2=1e-10,...){
-    
-   # stop if class of distance matrix is not D2      
-   if (class(G1)[1]!="Gram")
-    stop("for a ldblm.Gram method the class of the distance matrix G1 must be 'Gram'")
-   if (class(G2)[1]!="Gram")
-    stop("for a ldblm.Gram method the class of the distance matrix G2 must be 'Gram'")   
-   
-   # converts G to D2
-   D2_1 <- GtoD2(G1)
-   D2_2 <- GtoD2(G2) 
-   
-   # y and Distance are defined--> pass to dist method (try for avoid the program crash).
-   try(ans <- ldbglm.dist(y=y,dist1=D2_1,dist2=D2_2,kind.of.kernel=kind.of.kernel,
-          user_h=user_h,family=family,h.range=h.range,noh=noh,k.knn=k.knn,
-          method=method,weights=weights,rel.gvar=rel.gvar,eff.rank=eff.rank,maxiter=maxiter,
-          eps1=eps1,eps2=eps2))
-   if (class(ans)=="try-error")
-    return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
-   
-   ans$call <- match.call(expand.dots = FALSE) 
-   # hidden attributes  
-   attr(ans,"way") <- "G" 
-   attr(ans,"G1") <- G1 
-   attr(ans,"G2") <- G2 
-    
-   return(ans)
-}
 
-
-    #################################
-    ####    dbglm with Dist or   ####
-    ####  dissimilarity distance ####
-    #################################
-
-ldbglm.dist<- function(y,dist1,dist2=dist1,family=gaussian(),kind.of.kernel=1,
-          method="GCV",weights,user_h=quantile(dist1,.25)^.5,
-          h.range=quantile(as.matrix(dist1),c(.05,.25))^.5,noh=10,k.knn=3,
-          rel.gvar=0.95,eff.rank=NULL,maxiter=100,eps1=1e-10,eps2=1e-10,...){
-         
    # control method. See the auxiliar function
    method<-control_method(method,"ldbglm")
    
@@ -203,10 +175,8 @@ ldbglm.dist<- function(y,dist1,dist2=dist1,family=gaussian(),kind.of.kernel=1,
    } 
     
    # another controls: see the auxiliar function
-   controls <- controls_ldblm(dist1,dist2,user_h,method,h.range,noh,k.knn,
+   controls <- controls_ldblm(D2_1,D2_2,user_h,method,h.range,noh,k.knn,
            kind.of.kernel,y,weights)
-   dist1 <- controls$dist1
-   dist2 <- controls$dist2
    user_h <- controls$user_h
    h.range <- controls$h.range
    weights <- controls$weights
@@ -224,7 +194,7 @@ ldbglm.dist<- function(y,dist1,dist2=dist1,family=gaussian(),kind.of.kernel=1,
    }
    n <- nrow(as.matrix(y))
 
-   h.knn<-h.knn.funct(dist1^.5,k=k.knn)
+   h.knn<-h.knn.funct(D2_1^.5,k=k.knn)
 
    # compute the model for each method
    if (method!="user_h"){
@@ -237,7 +207,7 @@ ldbglm.dist<- function(y,dist1,dist2=dist1,family=gaussian(),kind.of.kernel=1,
     i <- 0
     for (h in h_vec){
       # fitted values and Shat for each bandwidth (h)
-      aux <-pred.train.sample.dbglm(y=y,dist1=dist1,dist2=dist2,n=n,h=h,h.knn=h.knn,
+      aux <-pred.train.sample.dbglm(y=y,dist1=D2_1,dist2=D2_1,n=n,h=h,h.knn=h.knn,
               kind.of.kernel=kind.of.kernel,family=family,weights=ori_weights,
               rel.gvar=rel.gvar,eff.rank=eff.rank,maxiter=maxiter,eps1=eps1,
               eps2=eps2)   
@@ -338,7 +308,7 @@ ldbglm.dist<- function(y,dist1,dist2=dist1,family=gaussian(),kind.of.kernel=1,
     if (method=="user_h"){
       # fitted values and Shat for user_h bandwidth
     
-      aux <-pred.train.sample.dbglm(y=y,dist1=dist1,dist2=dist2,n=n,h=user_h,
+      aux <-pred.train.sample.dbglm(y=y,dist1=D2_1,dist2=D2_2,n=n,h=user_h,
             h.knn=h.knn,kind.of.kernel=kind.of.kernel,family=family,
             weights=ori_weights,rel.gvar=rel.gvar,eff.rank=eff.rank,
             maxiter=maxiter,eps1=eps1,eps2=eps2)      
@@ -360,13 +330,13 @@ ldbglm.dist<- function(y,dist1,dist2=dist1,family=gaussian(),kind.of.kernel=1,
     call<- match.call(expand.dots = FALSE)
     # return the next attributes
     ans<-list(residuals=y-yhat_opt,fitted.values=yhat_opt,h_opt=h_opt,family=family,
-              y=y,Shat=S,weights=weights,call=call,dist1=dist1,dist2=dist2)
+              y=y,S=S,weights=weights,call=call,dist1=D2_1,dist2=D2_2)
 
 
     attr(ans,"kind.of.kernel")<-kind.of.kernel
     attr(ans,"method")<-method
-    attr(ans,"dist1")<-dist1
-    attr(ans,"dist2")<-dist2
+    attr(ans,"dist1")<-D2_1
+    attr(ans,"dist2")<-D2_2
     attr(ans,"R2")<-R2
     attr(ans,"OCV_opt")<-OCV_opt
     attr(ans,"GCV_opt")<-GCV_opt
@@ -384,8 +354,46 @@ ldbglm.dist<- function(y,dist1,dist2=dist1,family=gaussian(),kind.of.kernel=1,
 
     class(ans) <- c(ans$class, c("ldbglm", "ldblm"))
     return(ans)
- }
+    
+}
 
-  #generic function with a commun paramatre (y).
-  ldbglm<-function(y,...) 
-   UseMethod("ldbglm")
+ 
+ 
+    ###########################
+    ####  ldbglm with Gram ####
+    ###########################
+
+ldbglm.Gram <- function(G1,G2=G1,y,kind.of.kernel=1,user_h=NULL,
+             family=gaussian(),method="GCV",weights,h.range=NULL,noh=10,
+             k.knn=3,rel.gvar=0.95,eff.rank=NULL,maxiter=100,eps1=1e-10,
+             eps2=1e-10,...){
+    
+   # stop if class of distance matrix is not D2      
+   if (class(G1)[1]!="Gram")
+    stop("for a ldbglm.Gram method the class of the distance matrix G1 must be 'Gram'")
+   if (class(G2)[1]!="Gram")
+    stop("for a ldbglm.Gram method the class of the distance matrix G2 must be 'Gram'")   
+   
+   # converts G to D2
+   D2_1 <- GtoD2(G1)
+   D2_2 <- GtoD2(G2) 
+   
+   
+   # y and Distance are defined--> pass to dist method (try for avoid the program crash).
+   try(ans <- ldbglm.D2(D2_1=D2_1,D2_2=D2_2,y=y,kind.of.kernel=kind.of.kernel,
+          user_h=user_h,family=family,h.range=h.range,noh=noh,k.knn=k.knn,
+          method=method,weights=weights,rel.gvar=rel.gvar,eff.rank=eff.rank,maxiter=maxiter,
+          eps1=eps1,eps2=eps2))
+   if (class(ans)=="try-error")
+    return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
+   
+   ans$call <- match.call(expand.dots = FALSE) 
+   # hidden attributes  
+   attr(ans,"way") <- "G" 
+   attr(ans,"G1") <- G1 
+   attr(ans,"G2") <- G2 
+    
+   return(ans)
+}
+
+

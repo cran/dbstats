@@ -29,7 +29,22 @@ print.summary.ldblm <-function(x,...){
  if (!is.character(x$family))
   cat(gettextf("\nfamily: %s",x$family$family),"\n\n") 
  else
-  cat("\nfamily: gaussian\n\n")
+  cat("\nfamily: gaussian\n")
 
+ # print the using method
+  cat(gettextf("\nkind of kernel= %s",x$kind.kernel),"\n")  
+  
+  
+  # print the used bandwidth 
+  if (x$method!="user_h")
+   cat(gettextf("optimal bandwidth h : %f",x$h_opt),"\n") # print h_opt  
+  else 
+   cat(gettextf("user bandwidth h : %f",x$h_opt),"\n") # print h_opt  
+  
+    # print the appropriate statistic according to the using method 
+    if(!is.null(x$crit.value))
+      cat(paste(x$method, "value criterion :", format(x$crit.value,scientific=TRUE)),"\n")
+   cat("\n")
+  
 }
 

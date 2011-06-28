@@ -23,26 +23,6 @@ controls_ldblm <- function(dist1,dist2,user_h,method,h.range,noh,k.knn,
     stop("Weights array weights is not valid: some weights are negative")
    if (sum(weights)==0)
     stop("Weights array weights is not valid: sum(weights)=0")
-    
-     # Controls of dist class
-    if (class(dist1)[1]!="D2"){
-     if (class(dist1)[1]!="dist"&&class(dist1)[1]!="dissimilarity")
-       stop("the distance matrix dist1 must be of class 'dist'/'dissimilarity")
-     if (class(dist1)[1]=="dissimilarity"&&attr(dist1,"Metric")=="mixed")
-     dist1 <- as.matrix(dist1)
-     else 
-      dist1<-as.matrix(dist1)^2
-     class(dist1)<-"D2"
-    }
-    if (class(dist2)[1]!="D2"){
-     if (class(dist2)[1]!="dist"&&class(dist2)[1]!="dissimilarity")
-       stop("the distance matrix dist2 must be of class 'dist'/'dissimilarity")
-     if (class(dist2)[1]=="dissimilarity"&&attr(dist2,"Metric")=="mixed")
-      dist2 <- as.matrix(dist2)
-     else 
-      dist2<-as.matrix(dist2)^2
-     class(dist2)<-"D2"
-    }
 
     # controls: user_h
     if(is.null(user_h)&&method=="user_h")

@@ -11,8 +11,11 @@
     #### dbplsr of class formula ###
     ################################
 
-dbplsr.formula <- function(formula,data,...,metric="euclidean",method="ncomp",weights,
-                ncomp) 
+     #generic function with a commun parameter (y).
+ dbplsr<-function(...)  UseMethod("dbplsr")
+ 
+ dbplsr.formula <- function(formula,data,...,metric="euclidean",method="ncomp",
+                      weights,ncomp) 
 {
   # call dbglm
   mf <- match.call(expand.dots = FALSE)
@@ -27,7 +30,7 @@ dbplsr.formula <- function(formula,data,...,metric="euclidean",method="ncomp",we
   zy <- formula_to_zy(formula,data,mf,"dblm",metric)
 
   # y and z are defined--> pass to default method (try for avoid the program crash). 
-  try(ans <- dbplsr.yz(y=zy$y,z=zy$z,metric=metric,weights=weights,method=method,
+  try(ans <- dbplsr.yz(z=zy$z,y=zy$y,metric=metric,weights=weights,method=method,
         ncomp=ncomp))  
   
   if (class(ans)=="try-error") 
@@ -62,11 +65,13 @@ dbplsr.yz <- function(y,z,metric="euclidean",weights,ncomp,method="ncomp",...)
   
   # if metric=gower. the distance matrix D is already the squared.
   if (metric=="gower"){
-   D <-as.matrix(D)
-   class(D) <- "D2"
-  }
+     D2 <-as.matrix(D)
+     class(D2) <- "D2"
+  }else
+     D2 <-disttoD2(D)
+    
   # y and Distance are defined--> pass to dist method (try for avoid crash). 
-  try(ans <- dbplsr.dist(y,D,weights=weights,ncomp=ncomp,method=method)) 
+  try(ans <- dbplsr.D2(D2=D2,y=y,weights=weights,ncomp=ncomp,method=method)) 
  
   # y and Distance are defined--> pass to dist method (try for avoid crash). 
   if (class(ans)=="try-error") 
@@ -83,28 +88,6 @@ dbplsr.yz <- function(y,z,metric="euclidean",weights,ncomp,method="ncomp",...)
 
 
 
-    #################################
-    ####  dbplsr with D2 distance ###
-    #################################
-    
-dbplsr.D2 <- function(y,D2,...,weights,ncomp=ncomp,method="ncomp")
-{  
-                     
-    if (class(D2)[1]!="D2") 
-     stop("for a dblm.D2 method the class of the distance matrix D2 must be 'D2'")
-    else
-      try(ans<-dbplsr.dist(y=y,distance=D2,weights=weights,method=method,ncomp=ncomp))
-    
-    if (class(ans)=="try-error")
-     return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
-    
-    ans$call<-match.call(expand.dots = FALSE)
-    attr(ans,"way")<-"D2"
-    
-    return(ans)
-}
-
-
 
     #################################
     ####    dbplsr with Dist or   ###
@@ -112,7 +95,7 @@ dbplsr.D2 <- function(y,D2,...,weights,ncomp=ncomp,method="ncomp")
     #################################
 
 
-dbplsr.dist <- function(y,distance,...,weights,ncomp=ncomp,method="ncomp")
+dbplsr.dist <- function(distance,y,...,weights,ncomp=ncomp,method="ncomp")
 {    
 
    call <- match.call(expand.dots = FALSE)                   
@@ -121,7 +104,32 @@ dbplsr.dist <- function(y,distance,...,weights,ncomp=ncomp,method="ncomp")
     stop("distance must be defined")
    
    # dist to D2
-   Delta <- disttoD2(distance)   
+   Delta <- disttoD2(distance)     
+   
+   try(ans<-dbplsr.D2(D2=Delta,y=y,weights=weights,method=method,ncomp=ncomp))
+   if (class(ans)=="try-error")
+     return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
+   
+   ans$call <- call
+   ans$distance <- distance
+   attr(ans,"way")<-"D2"
+   return(ans)
+
+ }
+
+
+    #################################
+    ####  dbplsr with D2 distance ###
+    #################################
+    
+dbplsr.D2 <- function(D2,y,...,weights,ncomp=ncomp,method="ncomp")
+{  
+                     
+   if (!any (class(D2)=="D2")) 
+     stop("for a dblm.D2 method the class of the distance matrix D2 must be 'D2'")
+    
+       # control method. See the auxiliar function
+   method<-control_method(method,"dblm")  
    
    # another program controls: See the auxiliar function
    y <- as.matrix(y)
@@ -142,21 +150,15 @@ dbplsr.dist <- function(y,distance,...,weights,ncomp=ncomp,method="ncomp")
    weights <- weights/sum(weights) # percent weights !! 
    
    # G: inner products matrix (symmetrical G)
-   G <- Gcalc(n,weights,Delta) 
+   G <- Gcalc(n,weights,Delta=D2) 
    class(G)<-"Gram"
-
-   try(ans <- dbplsr.Gram(y,G,weights=weights,ncomp=ncomp,method=method)) 
+         
+   try(ans<-dbplsr.Gram(G=G,y=y,weights=ori_weights,method=method,ncomp=ncomp))
+    ans$call<-match.call(expand.dots = FALSE)
+    attr(ans,"way")<-"D2"
     
-   if (class(ans)=="try-error")
-     return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
-   
-   ans$call <- call
-   ans$distance <- distance
-   attr(ans,"way")<-"D2"
-   return(ans)
-
- }
-
+    return(ans)
+}
 
 
     ################################
@@ -164,7 +166,7 @@ dbplsr.dist <- function(y,distance,...,weights,ncomp=ncomp,method="ncomp")
     ####       object           ####
     ################################
 
-dbplsr.Gram <- function(y,G,...,weights,ncomp=ncomp,method="ncomp")
+dbplsr.Gram <- function(G,y,...,weights,ncomp=ncomp,method="ncomp")
 {                                       
    
    method <- control_method(method,"dbplsr")  
@@ -254,7 +256,7 @@ dbplsr.Gram <- function(y,G,...,weights,ncomp=ncomp,method="ncomp")
    
                                       
    ans<-list(residuals=ytit,fitted.values=yhat,fk=fk,bk=bk,Pk=Pk,ncomp=ncomp,
-             ncomp_opt=ncomp_opt,weights=ori_weights,method=method,y=y,Hhat=Hk,
+             ncomp_opt=ncomp_opt,weights=ori_weights,method=method,y=y,H=Hk,
              G0=Gini,Gk=Gk,gvar=gvar,gvec=gvec,gvar.iter=gvar.iter,ocv=ocv,
              gcv=gcv,aic=aic,bic=bic)
           
@@ -266,5 +268,5 @@ dbplsr.Gram <- function(y,G,...,weights,ncomp=ncomp,method="ncomp")
 
 
  #generic function with a commun paramatre (y).
- dbplsr<-function(y,...)  
-  UseMethod("dbplsr") 
+ #dbplsr<-function(y,...)  
+ # UseMethod("dbplsr") 

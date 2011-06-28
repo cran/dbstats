@@ -54,7 +54,7 @@
                     maxiter=maxiter,eps1=eps1,eps2=eps2) 
                                                  
        Hhat<-matrix(0,n,n)
-       Hhat[iid,iid]=aux$Hhat 
+       Hhat[iid,iid]<-aux$H
        auxshat<- matrix(S[i,]/sum(S[i,]),ncol=n,nrow=n,byrow=TRUE) +
              Hhat%*%(diag(rep(1,n))- matrix(S[i,]/sum(S[i,]),ncol=n,nrow=n,
              byrow=TRUE)) 

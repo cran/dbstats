@@ -155,7 +155,7 @@ predict.ldblm<-function(object,newdata1,newdata2=newdata1,new.k.knn=3,
     fit <- rep(1,nr)
     newS <- matrix(0,nr,n)
     newShat <- matrix(0,nr,n)
-    S<-object$Shat
+    S<-object$S
     weights <-object$weights
     
     rel.gvar<-attr(object,"rel.gvar")

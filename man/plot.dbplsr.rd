@@ -36,11 +36,11 @@
   (Default the first component). 
 }
  \item{method}{
-   Choosen the method \code{"OCV"}, \code{"GCV"}, \code{"AIC"} or \code{"BIC"} 
+   choosen method \code{"OCV"}, \code{"GCV"}, \code{"AIC"} or \code{"BIC"} 
    in the last plot.
 }
   \item{\dots}{
-  other parameters to be passed through to plotting functions
+  other parameters to be passed through to plotting functions.
 }
 }
 

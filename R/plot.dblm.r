@@ -73,7 +73,7 @@ plot.dblm<-function(x,which=c(1L:3L, 5L),id.n=3,main="",cook.levels = c(0.5, 1),
        else sqrt(w) * r
      
      # hat values         
-     hii<-diag(x$Hhat)+x$weights/sum(x$weights)   
+     hii<-diag(x$H)+x$weights/sum(x$weights)   
      
      # residual standard desviation
      if (inherits(x, "dblm")) 

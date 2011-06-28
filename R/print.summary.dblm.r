@@ -24,4 +24,20 @@ print.summary.dblm <-function(x,...){
  # print geometric variability 
  cat(gettextf("Weighted Geometric Variability: %f",
         x$gvar),"\n\n")  
+        
+ # effective rank used
+  if ((x$method)=="eff.rank"||(x$method)=="rel.gvar")
+    cat(gettextf("Used effective rank = %i",x$eff.rank),"\n")
+  else    
+    cat(gettextf("Optimal effective rank = %i",x$eff.rank),"\n")
+  
+  # Relative geometric variability
+  cat(gettextf("Relative geometric variability = %f",x$rel.gvar),"\n")
+  
+  # print the appropriate statistic according to the using method 
+   if(!is.null(x$crit.value))
+     cat(paste(x$method, "value criterion :", format(x$crit.value,scientific=TRUE)),"\n")
+   
+   cat("\n")
+ return (invisible())
 }                                           

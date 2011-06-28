@@ -55,14 +55,14 @@
     products matrix. 
  }
  \item{\dots}{
-    currently not used.
+       arguments passed to or from other methods to the low level. 
  }
 }
 \value{                
   A list of class \code{predict.ldbglm} containing the following components: 
  
-  \item{fit }{predicted values for the k new individuals}
-  \item{Shat }{matrix (with dimension (k,n)) of weights used to compute the predictions} 
+  \item{fit }{predicted values for the k new individuals.}
+  \item{newS }{matrix (with dimension (k,n)) of weights used to compute the predictions.} 
 }
 \note{
  Look at which way (or \code{type_var}) was made the \code{ldbglm} call. The parameter 
@@ -101,7 +101,7 @@ Delicado, Pedro <pedro.delicado@upc.edu> and Fortiana, Josep <fortiana@ub.edu>
  z <- rnorm(100)
  y <- rpois(100, exp(1+z))
  glm5<-glm(y ~z, family=quasi("identity"))
- ldbglm5<-ldbglm.dist(y,dist(z),family=quasi("identity"),noh=3)
+ ldbglm5<-ldbglm.dist(dist(z),y=y,family=quasi("identity"),noh=3)
  plot(z,y)
  points(z,glm5$fitt,col=2)
  points(z,ldbglm5$fitt,col=3)

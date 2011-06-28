@@ -30,14 +30,11 @@
 \method{dbplsr}{formula}(formula,data,...,metric="euclidean",
         method="ncomp",weights,ncomp) 
 
-# method for distance class 'dist' or 'dissimilary'
-dbplsr.dist(y,distance,...,weights,ncomp=ncomp,method="ncomp")
+\method{dbplsr}{dist}(distance,y,...,weights,ncomp=ncomp,method="ncomp")
 
-#  method for distance class 'D2'
-dbplsr.D2(y,D2,...,weights,ncomp=ncomp,method="ncomp")
+\method{dbplsr}{D2}(D2,y,...,weights,ncomp=ncomp,method="ncomp")
 
-#  method for class 'Gram'
-dbplsr.Gram(y,G,...,weights,ncomp=ncomp,method="ncomp")
+\method{dbplsr}{Gram}(G,y,...,weights,ncomp=ncomp,method="ncomp")
 }
 
 \arguments{
@@ -95,7 +92,7 @@ dbplsr.Gram(y,G,...,weights,ncomp=ncomp,method="ncomp")
 	 	the number of components to include in the model.
 }
   \item{\dots}{
-     arguments passed to or from other methods to the low level. Currently not used.
+     arguments passed to or from other methods to the low level. 
 }
 }
 \details{
@@ -129,7 +126,7 @@ dbplsr.Gram(y,G,...,weights,ncomp=ncomp,method="ncomp")
   \item{weights }{the specified weights.}
   \item{method }{the using method.} 
   \item{y }{the response used to fit the model.}
-  \item{Hhat }{the hat matrix projector.}
+  \item{H }{the hat matrix projector.}
   \item{G0 }{initial weighted centered inner products matrix of the squared 
              distance matrix.}  
   \item{Gk }{weighted centered inner products matrix in last iteration.}   

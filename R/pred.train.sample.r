@@ -56,7 +56,7 @@
        aux <- dblm.D2(y=y_aux,D2=dist2_aux,weights=weights[iid]*weights_aux,method=method,
                   rel.gvar=rel.gvar,eff.rank=eff.rank_aux)            
        Hhat<-matrix(0,n,n)
-       Hhat[iid,iid]=aux$Hhat
+       Hhat[iid,iid]=aux$H
       
        auxshat<- matrix(S[i,]/sum(S[i,]),ncol=n,nrow=n,byrow=TRUE) +
              Hhat%*%(diag(rep(1,n))- matrix(S[i,]/sum(S[i,]),ncol=n,nrow=n,

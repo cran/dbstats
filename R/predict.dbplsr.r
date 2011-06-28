@@ -78,7 +78,7 @@ predict.dbplsr <-function(object,newdata,type="Z",...){
      
     # Ghat i Gtit
     Gtit <- object$Gk
-    # Ghat <- object$Hhat%*%object$G0%*%object$Hhat
+    # Ghat <- object$H%*%object$G0%*%object$H
     Ghat <- object$G0-Gtit
     G<-Ghat
      

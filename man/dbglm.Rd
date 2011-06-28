@@ -30,18 +30,15 @@
         metric="euclidean",weights,maxiter=100,eps1=1e-10,
         eps2=1e-10,rel.gvar=0.95,eff.rank=NULL,offset,mustart=NULL) 
    
-# method for distance class 'dist' or 'dissimilary'
-dbglm.dist(y,distance,family=gaussian,weights,
+\method{dbglm}{dist}(distance,y,family=gaussian,weights,
         maxiter=100,eps1=1e-10,eps2=1e-10,rel.gvar=0.95,eff.rank=NULL,
         offset,mustart=NULL,...)
                 
-#  method for distance class 'D2'
-dbglm.D2(y,D2,...,family=gaussian,weights,maxiter=100,
+\method{dbglm}{D2}(D2,y,...,family=gaussian,weights,maxiter=100,
         eps1=1e-10,eps2=1e-10,rel.gvar=0.95,eff.rank=NULL,offset,
         mustart=NULL)
 
-#  method for class 'Gram'
-dbglm.Gram(y,G,...,family=gaussian,weights,maxiter=100,
+\method{dbglm}{Gram}(G,y,...,family=gaussian,weights,maxiter=100,
         eps1=1e-10,eps2=1e-10,rel.gvar=0.95,eff.rank=NULL,
         offset,mustart=NULL)              
 }              
@@ -132,7 +129,6 @@ dbglm.Gram(y,G,...,family=gaussian,weights,maxiter=100,
 }      
   \item{\dots}{
     arguments passed to or from other methods to the low level. 
-	Currently not used.
 }
 }
 \details{   
@@ -199,7 +195,7 @@ dbglm.Gram(y,G,...,family=gaussian,weights,maxiter=100,
 		\code{"maxiter"} (maximum allowed number of iterations 
 		has been exceeded).}
 
-  \item{Hhat }{ hat matrix projector of the last \code{dblm} iteration.}
+  \item{H }{ hat matrix projector of the last \code{dblm} iteration.}
   
   \item{rel.gvar }{the relative geometric variabiliy in the last \code{dblm} iteration.}
 
@@ -252,7 +248,7 @@ y <- rpois(100, exp(1+z))
 glm1<-glm(y ~z, family=poisson(link = "log"))
 D2<-as.matrix(dist(z))^2
 class(D2)<-"D2"
-dbglm1<-dbglm.D2(y,D2,family=poisson(link = "log"))
+dbglm1<-dbglm.D2(D2,y,family=poisson(link = "log"))
 
 plot(z,y)
 points(z,glm1$fitted.values,col=2)
@@ -266,7 +262,7 @@ y <- rbinom(100, 1, plogis(z))
 glm2<-glm(y ~z, family=binomial(link = "logit"))
 D2<-as.matrix(dist(z))^2
 class(D2)<-"D2"
-dbglm2<-dbglm.D2(y,D2,family=binomial(link = "logit"))
+dbglm2<-dbglm.D2(D2,y,family=binomial(link = "logit"))
 
 plot(z,y)
 points(z,glm2$fitted.values,col=2)

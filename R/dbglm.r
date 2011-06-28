@@ -32,7 +32,10 @@
     #### dbglm of class formula ####
     ################################
     
-dbglm.formula <-function(formula,data,family=gaussian,...,metric="euclidean",
+     #generic function with a commun parameter (y).
+ dbglm<-function(...)  UseMethod("dbglm")
+ 
+ dbglm.formula <-function(formula,data,family=gaussian,...,metric="euclidean",
             weights,maxiter=100,eps1=1e-10,eps2=1e-10,rel.gvar=0.95,eff.rank=NULL,
             offset,mustart=NULL) 
 {
@@ -86,11 +89,13 @@ dbglm.yz <- function(y,z,family=gaussian,metric="euclidean",
   
    # if metric=gower. the distance matrix D is already the squared.
    if (metric=="gower"){
-    D <-as.matrix(D)
-    class(D) <- "D2"
-   }
+     D2 <-as.matrix(D)
+     class(D2) <- "D2"
+   }else
+     D2 <-disttoD2(D)
+     
    # y and Distance are defined--> pass to dist method (try for avoid the program crash). 
-   try(ans<-dbglm.dist(y=y,distance=D,family=family,weights=weights,maxiter=maxiter,
+   try(ans<-dbglm.D2(y=y,D2=D2,family=family,weights=weights,maxiter=maxiter,
           eps1=eps1,eps2=eps2,eff.rank=eff.rank,rel.gvar=rel.gvar,
           offset = offset,mustart=mustart))     
     
@@ -107,73 +112,12 @@ dbglm.yz <- function(y,z,family=gaussian,metric="euclidean",
 }
 
 
-
-    #################################
-    ####  dbglm with D2 distance ####
-    #################################
-
-dbglm.D2<-function(y,D2,...,family=gaussian,weights,maxiter=100,eps1=1e-10,
-              eps2=1e-10,rel.gvar=0.95,eff.rank=NULL,offset,mustart=NULL)
-{ 
-  # D2 squared distances must be of class "D2"
-  if (class(D2)[1]!="D2") 
-    stop("for a dblm.D2 method the class of the distance matrix D2 must be 'D2'")
-  else{
-     try(ans <- dbglm.dist(y,D2,family=family,weights=weights,maxiter=maxiter,
-         eps1=eps1,eps2=eps2,rel.gvar=rel.gvar,eff.rank=eff.rank,
-         offset = offset,mustart=mustart))
-  }
-  if (class(ans)[1]=="try-error")
-   return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
-  
-  # hidden attributes 'call' and 'way'   
-  attr(ans,"call")<-match.call(expand.dots = FALSE)
-  attr(ans,"way")<-"D2"
-  attr(ans,"zs")<-D2
-  return(ans)
-}
-
-
-
-    #################################
-    ####  dbglm with G products  ####
-    #################################
-
-dbglm.Gram<-function(y,G,...,family=gaussian,weights,maxiter=100,eps1=1e-10,
-              eps2=1e-10,rel.gvar=0.95,eff.rank=NULL,offset,mustart=NULL)
-{ 
-  # D2 squared distances must be of class "D2"
-  if (class(G)[1]!="Gram") 
-    stop("for a dblm.Gram method the class of the inner products matrix G must be 'Gram'")
-  else{
-  
-   D2<-GtoD2(G)
-
-   try(ans <- dbglm.dist(y,D2,family=family,weights=weights,maxiter=maxiter,
-         eps1=eps1,eps2=eps2,rel.gvar=rel.gvar,eff.rank=eff.rank,
-         offset = offset,mustart=mustart))
-  }
-  if (class(ans)[1]=="try-error")
-   return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
-  
-  # hidden attributes 'call' and 'way'   
-  attr(ans,"call")<-match.call(expand.dots = FALSE)
-  attr(ans,"way")<-"G"
-  ans$G <- G    
-  return(ans)
-}
-
-
-
-
-
-
     #################################
     ####    dbglm with Dist or   ####
     ####  dissimilarity distance ####
     #################################
 
-dbglm.dist <- function(y,distance,family=gaussian,weights,maxiter=100,
+dbglm.dist <- function(distance,y,family=gaussian,weights,maxiter=100,
                 eps1=1e-10,eps2=1e-10,rel.gvar=0.95,eff.rank=NULL,
                 offset,mustart=NULL,...)
 { 
@@ -183,17 +127,46 @@ dbglm.dist <- function(y,distance,family=gaussian,weights,maxiter=100,
     stop("distance must be defined")
     
    # dist to D2
+   # dist to D2
    Delta <- disttoD2(distance)     
+  
+   try(ans <- dbglm.D2(D2=Delta,y=y,family=family,weights=weights,maxiter=maxiter,
+         eps1=eps1,eps2=eps2,rel.gvar=rel.gvar,eff.rank=eff.rank,
+         offset = offset,mustart=mustart))
+
+  if (class(ans)[1]=="try-error")
+   return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
    
+  # hidden attributes 'call' and 'way'   
+  attr(ans,"call")<-match.call(expand.dots = FALSE)
+  attr(ans,"way")<-"D2"
+  attr(ans,"zs")<-Delta
+
+   return(ans)                             
+}
+
+
+    #################################
+    ####  dbglm with D2 distance ####
+    #################################
+
+dbglm.D2<-function(D2,y,...,family=gaussian,weights,maxiter=100,eps1=1e-10,
+              eps2=1e-10,rel.gvar=0.95,eff.rank=NULL,offset,mustart=NULL)
+{ 
+  # D2 squared distances must be of class "D2"
+  if (!any (class(D2)=="D2")) 
+    stop("for a dbglm.D2 method the class of the distance matrix D2 must be 'D2'")
+
+   Delta <- D2
    # number of observations
    nobs <- nrow(as.matrix(y)) 
    n <- nobs 
 
    # Program controls: see de auxiliar function 
-   controls <- controls_dbglm(distance,weights,offset,rel.gvar,maxiter,
+   controls <- controls_dbglm(Delta,weights,offset,rel.gvar,maxiter,
                         eps1,eps2,y)
    weights  <- controls$weights 
-   weights <- weights/sum(weights)
+   #weights <- weights/sum(weights)
    offset   <- controls$offset 
    rel.gvar <- controls$rel.gvar 
    maxiter  <- controls$maxiter 
@@ -308,9 +281,9 @@ dbglm.dist <- function(y,distance,family=gaussian,weights,maxiter=100,
       stop(paste("there are only one observation in the dblm iteration ",iter,". The weights are negative. Try to use other link"))
            
       
-     dblm_aux <- dblm.D2(y=z,D2=Delta_aux,weights=new_weights,method=method,
+     dblm_aux <- dblm.D2(D2=Delta_aux,y=z,weights=new_weights,method=method,
                     rel.gvar=rel.gvar,eff.rank=eff.rank_aux)          
-     Hhat<-dblm_aux$Hhat
+     Hhat<-dblm_aux$H
      
      # eta[good] = fitted values of the dblm (only with good observations)
      eta[good]<-dblm_aux$fitted.values
@@ -325,7 +298,7 @@ dbglm.dist <- function(y,distance,family=gaussian,weights,maxiter=100,
        
        class(Delta_pr)<-"D2"
        eta[which(!good)]<-predict(dblm_aux,Delta_pr,type="D2")
-       Hhat[good,good]<-dblm_aux$Hhat   
+       Hhat[good,good]<-dblm_aux$H   
      }
      
      # link: 1. logit, 2. logarithmic, 3. Identity, 4. mu-1, 5. mu-2 
@@ -378,7 +351,7 @@ dbglm.dist <- function(y,distance,family=gaussian,weights,maxiter=100,
    ans<-list(residuals=residuals,fitted.values=mu,family=family,deviance=Dev,
             aic.model=aic.model,null.deviance=null.deviance,iter=iter,
             weights=new_weights,prior.weights=weights,df.residual=df.residual,
-            df.null=df.null,y=y,convcrit=convcrit,Hhat=Hhat,
+            df.null=df.null,y=y,convcrit=convcrit,H=Hhat,
             rel.gvar=dblm_aux$rel.gvar,eff.rank=dblm_aux$eff.rank)
                         
                          
@@ -389,10 +362,43 @@ dbglm.dist <- function(y,distance,family=gaussian,weights,maxiter=100,
    attr(ans,"way")<-"D2"
    attr(ans,"G")<-D2toG(Delta,weights)
    attr(ans,"zs")<-Delta
-   attr(ans,"eta")<-eta
-   return(ans)                             
+   attr(ans,"eta")<-eta  
+  return(ans)
 }
 
- #generic function with a commun paramatre (y).
- dbglm<-function(y,...)  
-  UseMethod("dbglm")
+
+
+    #################################
+    ####  dbglm with G products  ####
+    #################################
+
+dbglm.Gram<-function(G,y,...,family=gaussian,weights,maxiter=100,eps1=1e-10,
+              eps2=1e-10,rel.gvar=0.95,eff.rank=NULL,offset,mustart=NULL)
+{ 
+  # D2 squared distances must be of class "D2"
+  if (class(G)[1]!="Gram") 
+    stop("for a dbglm.Gram method the class of the inner products matrix G must be 'Gram'")
+  else{
+  
+   D2<-GtoD2(G)
+   
+   try(ans <- dbglm.D2(D2=D2,y=y,family=family,weights=weights,maxiter=maxiter,
+         eps1=eps1,eps2=eps2,rel.gvar=rel.gvar,eff.rank=eff.rank,
+         offset = offset,mustart=mustart))
+  }
+  if (class(ans)[1]=="try-error")
+   return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
+  
+  # hidden attributes 'call' and 'way'   
+  attr(ans,"call")<-match.call(expand.dots = FALSE)
+  attr(ans,"way")<-"G"
+  ans$G <- G    
+  return(ans)
+}
+
+
+
+
+
+
+

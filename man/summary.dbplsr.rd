@@ -19,7 +19,7 @@
    an object of class \code{dbplsr}. Result of \code{\link{dbplsr}}.
  }
   \item{\dots}{
-    currently not used.
+    arguments passed to or from other methods to the low level. 
  }
 }
 
@@ -35,7 +35,11 @@
   \item{sigma }{ the residual standard error.}
   \item{gvar }{total weighted geometric variability.}  
   \item{gvec }{the diagonal entries in G0.} 
-  \item{gvar.iter }{ geometric variability for each iteration.}  
+  \item{gvar.iter }{ geometric variability for each iteration.}   
+  \item{method}{ the using method to set \code{ncomp}.}
+  \item{crit.value }{ value of criterion defined in \code{method}.}
+   \item{ncomp_opt }{optimum number of components according to the selected method.}  
+ 
 }
 
 \references{
