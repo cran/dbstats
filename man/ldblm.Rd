@@ -21,7 +21,7 @@
 	\code{dist1} whereas a second (semi)metric \code{dist2} (which may coincide
 	with \code{dist1}) is used for distance-based prediction.  
 	Both \code{dist1} and \code{dist2}  can either be computed from observed 
-	explanatory variables or directly input as a squared interdistances 
+	explanatory variables or directly input as a squared distances 
 	matrix or as a \code{Gram} matrix. The response is a continuous variable 
   as in the ordinary linear model. The model allows for a mixture of 
   continuous and qualitative explanatory variables or, in fact, from more 

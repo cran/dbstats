@@ -1,3 +1,12 @@
+Version 1.0.4 [2014-12-12]
+----------------------------
+
+  o New summary format for ldbglm objects. Two new functions have been defined:
+    summary.ldbglm and print.summary.ldbglm
+
+  o The use of "offset" now is allowed as an additional parameter in dbglm
+
+
 Version 1.0.3 [2013-11-22]
 ----------------------------
 

@@ -14,8 +14,8 @@
 	In the currently implemented methods the response is a univariate variable
 	as in the ordinary linear model or in the generalized linear model.
    
-	Distances can either be directly input as an interdistances matrix,
-	a squared interdistances matrix, an inner-products matrix 
+	Distances can either be directly input as an distances matrix,
+	a squared distances matrix, an inner-products matrix 
 	(see \code{\link[dbstats]{GtoD2}}) or computed from observed 
 	explanatory variables. 
 

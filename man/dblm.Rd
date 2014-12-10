@@ -13,7 +13,7 @@
     \code{dblm} is a variety of linear model where explanatory information 
    is coded as distances between individuals. These distances can either 
    be computed from observed explanatory variables or directly input as 
-   a squared interdistances matrix. The response is a continuous variable as 
+   a squared distances matrix. The response is a continuous variable as 
    in the ordinary linear model. Since distances can be computed from a mixture 
    of continuous and qualitative explanatory variables or, 
    in fact, from more general quantities, \code{dblm} is a proper extension of 

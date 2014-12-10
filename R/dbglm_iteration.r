@@ -80,7 +80,7 @@ dbglm.iteration <- function(y, mu, weights,  nobs, eta, Delta, method, offset, n
      }
 
      # link: 1. logit, 2. logarithmic, 3. Identity, 4. mu-1, 5. mu-2     
-     mu  <-linkinv(eta)
+     mu<-linkinv(eta <- eta+ offset) # Aquí he canviat
      Dev <- sum(dev.resids(y,mu,weights))
 
      if (is.finite(any(mu<0)))
@@ -116,7 +116,12 @@ dbglm.iteration <- function(y, mu, weights,  nobs, eta, Delta, method, offset, n
 
    # residuals, residuals degree of freedom, null deviance and aic
    wtdmu         <-sum(weights*y)/sum(weights)
-   null.deviance <-sum(dev.resids(y,wtdmu,weights))
+  
+  null.deviance <- eval(call("glm.fit", 
+     x = rep(1,length(y)), y = y, weights = weights, 
+     offset = offset, family = family, intercept = TRUE))$deviance
+     
+  # null.deviance <-sum(dev.resids(y,wtdmu,weights))
    n.ok          <-nobs-sum(weights==0)
    df.null       <-n.ok-1
    df.residual   <-df.null-dblm_aux$eff.rank

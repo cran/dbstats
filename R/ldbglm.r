@@ -301,21 +301,17 @@ ldbglm.D2<-function(D2.1,D2.2=D2.1,y,family=gaussian(),kind.of.kernel=1,
       BIC_opt<-NULL
     }
     
-    # calculate R2
-    sumy02 <- sum(weights*(y-mean(y))^2)
-    R2 <- 1 - sum(weights*(yhat_opt-y)^2)/sumy02
-
     call<- match.call(expand.dots = FALSE)
     # return the next attributes
     ans<-list(residuals=y-yhat_opt,fitted.values=yhat_opt,h.opt=h.opt,family=family,
-              y=y,S=S,weights=weights,call=call,dist1=D2.1,dist2=D2.2)
+              y=y,S=S,weights=ori_weights,call=call,dist1=D2.1,dist2=D2.2)
 
 
     attr(ans,"kind.of.kernel")<-kind.of.kernel
     attr(ans,"method.h")<-method.h
     attr(ans,"dist1")<-D2.1
     attr(ans,"dist2")<-D2.2
-    attr(ans,"R2")<-R2
+#    attr(ans,"R2")<-R2
     attr(ans,"GCV_opt")<-GCV_opt
     attr(ans,"AIC_opt")<-AIC_opt
     attr(ans,"BIC_opt")<-BIC_opt
@@ -361,7 +357,7 @@ ldbglm.Gram <- function(G1,G2=G1,y,kind.of.kernel=1,user.h=NULL,
           method.h=method.h,weights=weights,rel.gvar=rel.gvar,eff.rank=eff.rank,maxiter=maxiter,
           eps1=eps1,eps2=eps2))
    if (class(ans)=="try-error")
-    return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
+    return(paste("Program failed. Try to read the help. If the error persists please communicate with us "))
    
    ans$call <- match.call(expand.dots = FALSE) 
    # hidden attributes  

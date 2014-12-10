@@ -13,7 +13,7 @@
     \code{dbglm} is a variety of generalized linear model where explanatory 
    information is coded as distances between individuals. These distances 
    can either be computed from observed explanatory variables or directly 
-   input as a squared inter-distances matrix. 
+   input as a squared distances matrix. 
 
    Response and link function as in the \code{glm} function for ordinary 
    generalized linear models.

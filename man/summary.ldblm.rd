@@ -1,15 +1,13 @@
 \name{summary.ldblm}
 \alias{summary.ldblm}
-\alias{summary.ldbglm}
 \alias{print.summary.ldblm}
-\alias{print.summary.ldbglm}
 
 \title{
-    Summarizing local distance-based (generalized) linear model fits
+    Summarizing local distance-based linear model fits
 }
 
 \description{
-\code{summary} method for class \code{"ldblm"} or \code{"ldbglm"}.
+\code{summary} method for class \code{"ldblm"}.
  }
  
 \usage{
@@ -18,8 +16,8 @@
 
 \arguments{
   \item{object}{
-   an object of class \code{ldblm} or \code{ldbglm}. 
-   Result of \code{\link{ldblm}} or \code{\link{ldbglm}}.
+   an object of class \code{ldblm}. 
+   Result of \code{\link{ldblm}}.
  }
   \item{\dots}{
     arguments passed to or from other methods to the low level. 

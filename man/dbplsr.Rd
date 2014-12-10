@@ -13,12 +13,11 @@
       \code{dbplsr} is a variety of partial least squares regression 
    where explanatory information is coded as distances between individuals.
    These distances can either be computed from observed explanatory variables
-   or directly input as a squared interdistances matrix. 
+   or directly input as a squared distances matrix. 
   
    Since distances can be computed from a mixture of continuous and 
    qualitative explanatory variables or, in fact, from more general 
    quantities, \code{dbplsr} is a proper extension of \code{plsr}.
-   
                                  
    Notation convention: in distance-based methods we must distinguish 
    \emph{observed explanatory variables} which we denote by Z or z, from 

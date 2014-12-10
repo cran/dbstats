@@ -13,8 +13,8 @@
 
 summary.ldblm <-function(object,...){
 
-    if (!inherits(object, "ldblm")&&!inherits(object, "ldbglm")) 
-      stop("use only with \"ldblm\" or \"ldbglm\" objects")
+    if (!inherits(object, "ldblm")) 
+      stop("use only with \"ldblm\" objects")
  
     # recover attributes rdf, weights, residuals of dblm
     z <- object
@@ -35,10 +35,7 @@ summary.ldblm <-function(object,...){
     call <-z$call
 
     # family
-    if (inherits(object, "ldbglm"))
-     family <-object$family
-    else 
-     family <-"gaussian"
+    family <-"gaussian"
      
      
     kind.kernel <- switch(attr(object,"kind.of.kernel"),
@@ -66,13 +63,11 @@ summary.ldblm <-function(object,...){
     ans <- list(nobs=nobs,r.squared=R2,trace.hat=t_hat,call=call,
                   residuals=z$residuals,family=family,y=z$y,
                   kind.kernel=kind.kernel,method.h=attr(object,"method.h"),
-                  h.opt=object$h.opt, crit.value=crit.value)
-    
-    if (inherits(object, "ldbglm"))
-      class(ans)<-c("summary.ldbglm","summary.ldblm")
-    else
-      class(ans)<-"summary.ldblm"
-    
+                  h.opt=object$h.opt, crit.value=crit.value,
+                  summary.dist1=summary(as.numeric(object$dist1^.5)),
+                  percentile.h.opt=100*mean(object$dist1^.5<=object$h.opt))
+ 
+    class(ans)<-"summary.ldblm"
 
     return(ans)
 }

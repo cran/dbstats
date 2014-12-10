@@ -1,3 +1,4 @@
+import(cluster,pls)
 
 export(dblm) 
 export(dblm.formula) 
@@ -55,6 +56,8 @@ S3method(summary,dblm)
 S3method(print,summary.dblm)
 S3method(summary,ldblm)
 S3method(print,summary.ldblm)
+S3method(summary,ldbglm)
+S3method(print,summary.ldbglm)
 S3method(summary,dbplsr)
 S3method(print,summary.dbplsr)
 

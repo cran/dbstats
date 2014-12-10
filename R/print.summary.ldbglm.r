@@ -1,15 +1,15 @@
  
- #############################
- #### print.summary.ldblm ####
- #############################
+ ##############################
+ #### print.summary.ldbglm ####
+ ##############################
 
-print.summary.ldblm <-function(x,digits = 2,...){
+print.summary.ldbglm <-function(x,digits = 2,...){
  
- if (!inherits(x,"summary.ldblm")) 
-   stop("use only with \"summary.ldblm\" objects")
+ if (!inherits(x,"summary.ldbglm")) 
+   stop("use only with \"summary.ldbglm\" objects")
  
  # print the call 
- x$call[[1]]<-as.name("ldblm")
+ x$call[[1]]<-as.name("ldbglm")
  cat("\nCall:  ", paste(deparse(x$call), sep = "\n", collapse = "\n"),
         "\n", sep = "")
 
@@ -18,20 +18,31 @@ print.summary.ldblm <-function(x,digits = 2,...){
    cat(gettextf("\nfamily: %s",x$family$family),"\n") 
  else
    cat("\nfamily: gaussian\n")
-
- # print the Residuals
- cat("\nResiduals:\n")
- print(summary(as.numeric(format(round(x$residuals,2)))))
-
- # print the Sum of Squares
- cat(gettextf("\nR-squared : %s",format(round(x$r.squared,digits=4))))
+ 
+ # Deviance Residuals
+ cat("\nDeviance Residuals:\n")
+ print(summary(as.numeric(format(round(x$deviance.resid,digits=4)))))
+ 
+ # dispersion
+ if (x$family$family %in% c("poisson","binomial"))
+   cat(gettextf("\n(Dispersion parameter for %s family taken to be %i)",
+                x$family$family,x$dispersion),"\n")
+ else
+   cat(gettextf("\n(Dispersion parameter for %s family taken to be %f)",
+                x$family$family,x$dispersion),"\n")
+ 
+ # deviance: null or estimated model
+ cat(gettextf("\n    Null deviance: %s  on %i degrees of freedom",
+              format(round(x$null.deviance,digits)),x$df.null))
+ cat(gettextf("\nResidual deviance: %s  on %s equivalent number of degrees of freedom",
+              format(round(x$residual.deviance,digits=digits)),format(round(x$df.residual,digits=digits))),"\n")
  
  # print the Number of Observations
  cat(gettextf("\nNumber of Observations:    %i",x$nobs))
- 
+
  # print the Trace of smoother matrix
  cat(gettextf("\nTrace of smoothing matrix: %s",format(round(x$trace.hat,2))),"\n") 
- 
+   
   cat("\nSummary of distances between data:\n")
   print(x$summary.dist1) 
  
