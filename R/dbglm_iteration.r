@@ -80,7 +80,7 @@ dbglm.iteration <- function(y, mu, weights,  nobs, eta, Delta, method, offset, n
      }
 
      # link: 1. logit, 2. logarithmic, 3. Identity, 4. mu-1, 5. mu-2     
-     mu<-linkinv(eta <- eta+ offset) # Aquí he canviat
+     mu<-linkinv(eta <- eta+ offset) 
      Dev <- sum(dev.resids(y,mu,weights))
 
      if (is.finite(any(mu<0)))

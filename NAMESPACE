@@ -94,3 +94,10 @@ S3method(ldblm,formula)
 S3method(ldblm,dist)
 S3method(ldblm,D2)
 S3method(ldblm,Gram)
+
+importFrom("grDevices", "devAskNewPage", "extendrange")
+importFrom("graphics", "abline", "axis", "legend", "lines", "par",
+             "plot", "strheight", "text")
+importFrom("stats", "as.dist", "formula", "gaussian", "lowess",
+             "model.matrix", "model.response", "optimise", "predict",
+             "qqline", "qqnorm", "quantile")

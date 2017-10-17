@@ -214,9 +214,9 @@ dblm.D2 <- function(D2,y,...,method="OCV",full.search=TRUE,weights,
    
    g <- diag(G)
 
-   # important! definim el paramatre intern rk, té us sentit similar al eff.rank, 
-   # l'unic és que facilita el càlcul del nou rank si s'usa un dels 4 metodes. 
-   # mirar en les funcions internes el funcionament.
+   # Important! We define the internal parameter rk, its use is similar to that of  eff.rank, 
+   # it facilitates computation of the new rank when one of the 4 methods. 
+   # See its operation in the internal functions.
     
    threshold <- 0
    # Ordinary Cross- validation to choose the effective rank
@@ -341,8 +341,8 @@ dblm.D2 <- function(D2,y,...,method="OCV",full.search=TRUE,weights,
    resStand.err<-hwyhat$resStand.err
    
    rss<-resStand.err^2*hwyhat$rdf/n  
-   aic <- 2*eff.rank+n*log(rss) 
-   bic <- n*log(rss)+eff.rank*log(n)  
+   aic <- 2*(eff.rank+1)+n*log(rss) 
+   bic <- n*log(rss)+(eff.rank+1)*log(n)  
 
 
    call<- match.call(expand.dots = FALSE)

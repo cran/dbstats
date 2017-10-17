@@ -4,12 +4,10 @@
     #### function Hwyhat ####
     #########################
 
- ## Descripcion: 
- ##    funció intermitja que es cridada si els metodes són "ocv",..., tots menys 
- ##    el que defineix el rank l'usuari (eff.rank).
- ##    Implementada per desminuir el temps d'execució (al repetir-se en molts 
- ##    casos fins a n vegades). Evita doncs, tots els càlculs innecessaris de la 
- ##    funció principal dblm.
+ ## Description: 
+ ##    Internal function called for methods "ocv",..., all of them except
+ ##    eff.rank is user defined.
+ ##    Its role is to decrease execution time avoiding unnecessary computations in the dblm function
  ##         call HwProject:
  ##              - hat matrix Hw
  ##              - eff.rank 
@@ -36,20 +34,19 @@
     # fitted values,considering the weights,the hat matix, and the centered y (y0).
     yhat <- sum(weights*y) + Hw %*% y0
     
-    # resid. stand. desviacion. use the original weights (not the percentual weights) 
-    # to achive the same results that lm (see that the weights are only multiplied in the numerator). 
+    # resid. stand. deviation. use original weights (not the percentual weights) 
+    # to achieve the same results than lm (see that the weights are only multiplied in the numerator). 
     if(n-1-eff.rank!=0) resStand.err<-sqrt(sum(ori_weights*(yhat-y)^2)/(n-1-eff.rank))
     else resStand.err<-0
     
-    # calculing the ordinary cross-validation estimator
+    # calculating the ordinary cross-validation estimator
     ocv<-  sum(weights*((y-yhat)/(1-diag(Hw)))^2)
       
-    # calculing the generalized cross-validation estimator
+    # calculating the generalized cross-validation estimator
     gcv <-sum(weights*(yhat-y)^2)/((1-mean(diag(Hw)))^2)  
     
-    # Return a list with the fitted values, the effective rank, the inverse of 
-    # Fw, the hat matrix, the ocv and gcv estimators, the residual standard 
-    # error, and the residual degree of freedom
+    # Return a list with fitted values, effective rank, inverse of Fw,  hat matrix, 
+    # the ocv and gcv estimators, residual standard error, and residual degrees of freedom
     ans<-list(yhat=yhat,eff.rank=eff.rank,Fwplus=Fwplus,Hw=Hw,ocv=ocv,gcv=gcv,
       resStand.err=resStand.err,rdf=(n-1-eff.rank),used_rel.gvar=used_rel.gvar)
     

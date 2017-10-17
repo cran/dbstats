@@ -1,3 +1,9 @@
+Version 1.0.5 [2017-10-17]
+----------------------------
+
+  o Corrected a minor error in the formulas for aic and bic in the dblm code.
+
+
 Version 1.0.4 [2014-12-12]
 ----------------------------
 
