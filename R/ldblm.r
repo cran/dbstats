@@ -19,7 +19,7 @@
     ################################
     #### dbglm of class formula ####
     ################################
- ldblm<-function(...)  UseMethod("ldblm")
+ldblm<-function(...)  UseMethod("ldblm")
      
 ldblm.formula<-function(formula,data,...,kind.of.kernel=1,
               metric1="euclidean",metric2=metric1,method.h="GCV",weights,
@@ -48,7 +48,7 @@ ldblm.formula<-function(formula,data,...,kind.of.kernel=1,
         user.h=user.h,h.range=h.range,noh=noh,k.knn=k.knn,rel.gvar=rel.gvar,
         eff.rank=eff.rank)) 
    
-  if (class(ans)=="try-error") 
+  if (inherits(ans,"try-error")) 
      return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
  
   # call dbglm
@@ -99,7 +99,7 @@ ldblm.yz <- function(y,z,kind.of.kernel=1,metric1="euclidean",
      method.h=method.h,weights=weights,user.h=user.h,h.range=h.range,noh=noh,
      k.knn=k.knn,rel.gvar=rel.gvar,eff.rank=eff.rank)) 
   
-   if (class(ans)=="try-error") 
+   if (inherits(ans,"try-error")) 
     return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
   
    ans$call<-match.call(expand.dots = FALSE)
@@ -129,9 +129,9 @@ ldblm.dist <- function(dist1,dist2=dist1,y,kind.of.kernel=1,method.h="GCV",
            rel.gvar=0.95,eff.rank=NULL,...){
           
    # stop if class of distance matrix is not dist
-   if (!any (class(dist1)=="dist")) 
+   if (!inherits(dist1,"dist")) 
     stop("for a ldblm.dist method the class of the distance matrix dist1 must be 'dist'")
-   if (!any (class(dist2)=="dist")) 
+   if (!inherits(dist2,"dist")) 
     stop("for a ldblm.dist method the class of the distance matrix dist2 must be 'dist'")
    
    # dist to D2
@@ -143,7 +143,7 @@ ldblm.dist <- function(dist1,dist2=dist1,y,kind.of.kernel=1,method.h="GCV",
    try(ans <- ldblm.D2(D2.1=Delta1,D2.2=Delta2,y=y,kind.of.kernel=kind.of.kernel,
               method.h=method.h,weights=weights,user.h=user.h,h.range=h.range,
               noh=noh,k.knn=k.knn,rel.gvar=rel.gvar,eff.rank=eff.rank))    
-   if (class(ans)=="try-error")
+   if (inherits(ans,"try-error"))
     return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
    
    ans$call <- match.call(expand.dots = FALSE) 
@@ -345,9 +345,9 @@ ldblm.Gram <- function(G1,G2=G1,y,kind.of.kernel=1,method.h="GCV",weights,
          eff.rank=NULL,...){
     
    # stop if class of distance matrix is not D2      
-   if (class(G1)[1]!="Gram")
+   if (!inherits(G1,"Gram"))
     stop("for a ldblm.Gram method the class of the distance matrix G1 must be 'Gram'")
-   if (class(G2)[1]!="Gram")
+   if (!inherits(G2,"Gram"))
     stop("for a ldblm.Gram method the class of the distance matrix G2 must be 'Gram'")   
    
    # converts G to D2
@@ -358,7 +358,7 @@ ldblm.Gram <- function(G1,G2=G1,y,kind.of.kernel=1,method.h="GCV",weights,
    try(ans <- ldblm.D2(D2.1=D2.1,D2.2=D2.2,y=y,kind.of.kernel=kind.of.kernel,
               method.h=method.h,user.h=user.h,h.range=h.range,noh=noh,k.knn=k.knn,
               rel.gvar=rel.gvar,eff.rank=eff.rank))    
-   if (class(ans)=="try-error")
+   if (inherits(ans,"try-error"))
     return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
    
    ans$call <- match.call(expand.dots = FALSE) 

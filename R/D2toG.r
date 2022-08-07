@@ -6,7 +6,7 @@
 
 
  D2toG <- function(D2,weights){
-   if (class(D2)!="D2")
+   if (!inherits(D2,"D2"))
     stop(" 'D2' must be of class D2")
    
    n<-ncol(D2)

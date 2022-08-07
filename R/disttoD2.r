@@ -6,10 +6,10 @@
 
 
  disttoD2 <- function(distance){
-   if (class(distance)[1]!="D2"){
-     if (class(distance)[1]!="dist"&&class(distance)[1]!="dissimilarity") 
+   if (!inherits(distance,"D2")){
+     if (!inherits(distance,"dist")&&!inherits(distance,"dissimilarity")) 
        stop("the distance matrix must be of class 'dist'/'dissimilarity")
-     if (class(distance)[1]=="dissimilarity"&&attr(distance,"Metric")=="mixed")
+     if (inherits(distance,"dissimilarity")&&attr(distance,"Metric")=="mixed")
       Delta <- as.matrix(distance)
      else
       Delta<-as.matrix(distance)^2

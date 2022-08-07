@@ -60,7 +60,7 @@
             weights=weights,maxiter=maxiter,eps1=eps1,eps2=eps2,rel.gvar=rel.gvar,eff.rank=eff.rank,
             offset=offset,mustart=mustart,range.eff.rank=range.eff.rank))        
  
-  if (class(ans)[1]=="try-error") 
+  if (inherits(ans,"try-error")) 
    return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
   
   # hidden attribute 'call' (used in print and summary)
@@ -106,7 +106,7 @@ dbglm.yz <- function(y,z,family=gaussian,metric="euclidean", method ="GCV",
           eps1=eps1,eps2=eps2,eff.rank=eff.rank,rel.gvar=rel.gvar,
           offset = offset,mustart=mustart,range.eff.rank=range.eff.rank))     
     
-   if (class(ans)[1]=="try-error") 
+   if (inherits(ans,"try-error")) 
     return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
  
    # hidden attributes 'metric', 'call', 'zs' and 'way'  
@@ -143,7 +143,7 @@ dbglm.dist <- function(distance,y,family=gaussian, method = "GCV", full.search=T
          eps1=eps1,eps2=eps2,rel.gvar=rel.gvar,eff.rank=eff.rank,
          offset = offset,mustart=mustart,range.eff.rank=range.eff.rank))
 
-  if (class(ans)[1]=="try-error")
+  if (inherits(ans,"try-error"))
    return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
    
   # hidden attributes 'call' and 'way'   
@@ -163,7 +163,7 @@ dbglm.D2<-function(D2,y,...,family=gaussian, method ="GCV", full.search=TRUE, we
               eps2=1e-10,rel.gvar=0.95,eff.rank=NULL,offset,mustart=NULL, range.eff.rank)
 { 
   # D2 squared distances must be of class "D2"
-  if (!any (class(D2)=="D2")) 
+  if (!inherits(D2,"D2")) 
     stop("for a dbglm.D2 method the class of the distance matrix D2 must be 'D2'")
 
    Delta <- D2
@@ -381,7 +381,7 @@ dbglm.Gram<-function(G,y,...,family=gaussian, method ="GCV", full.search=TRUE, w
               eps2=1e-10,rel.gvar=0.95,eff.rank=NULL,offset,mustart=NULL, range.eff.rank = c(1,ncol(G)-1))
 { 
   # D2 squared distances must be of class "D2"
-  if (class(G)[1]!="Gram") 
+  if (!inherits(G,"Gram")) 
     stop("for a dbglm.Gram method the class of the inner products matrix G must be 'Gram'")
   else{
   
@@ -391,7 +391,7 @@ dbglm.Gram<-function(G,y,...,family=gaussian, method ="GCV", full.search=TRUE, w
          eps1=eps1,eps2=eps2,rel.gvar=rel.gvar,eff.rank=eff.rank,
          offset = offset,mustart=mustart,range.eff.rank=range.eff.rank))
   }
-  if (class(ans)[1]=="try-error")
+  if (inherits(ans,"try-error"))
    return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
   
   # hidden attributes 'call' and 'way'   

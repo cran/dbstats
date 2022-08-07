@@ -26,8 +26,8 @@ predict.dbglm <- function(object,newdata,type.pred= c("link", "response"),
      if (type.var!="Z"&&type.var!="D2"&&type.var!="G")
       stop("type.var must be Z for explanatory values or D2 for square distance between individuals")
 
-     if (class(newdata)[1]=="dist"|| class(newdata)[1]=="dissimilarity")
-      newdata<-as.matrix(newdata)^2
+	if (inherits(newdata,"dist")||inherits(newdata,"dissimilarity"))
+		newdata<-as.matrix(newdata)^2
 
      # if new data have the explanatory values of the new indiviudals
      if (type.var=="Z"){

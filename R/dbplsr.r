@@ -20,7 +20,7 @@
   # call dbglm
   mf <- match.call(expand.dots = FALSE)
 
-  # control metric. See the auxiliar function
+  # control metric. See the auxiliary function
   metric<-control_metric(metric)  
   
   if (missing(data))
@@ -33,7 +33,7 @@
   try(ans <- dbplsr.yz(z=zy$z,y=zy$y,metric=metric,weights=weights,method=method,
         ncomp=ncomp))  
   
-  if (class(ans)=="try-error") 
+  if (inherits(ans,"try-error")) 
     return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
   
   # call dbglm
@@ -55,7 +55,7 @@ dbplsr.yz <- function(y,z,metric="euclidean",weights,ncomp,method="ncomp",...)
   call <- match.call(expand.dots = FALSE)
   # See if z or distance matrix is defined by the user.
   #  require(cluster)
-  # control metric. See the auxiliar function
+  # control metric. See the auxiliary function
   metric<-control_metric(metric)
   
   # call z_to_dist to pass the explanatory variables to an object of class dist 
@@ -74,7 +74,7 @@ dbplsr.yz <- function(y,z,metric="euclidean",weights,ncomp,method="ncomp",...)
   try(ans <- dbplsr.D2(D2=D2,y=y,weights=weights,ncomp=ncomp,method=method)) 
  
   # y and Distance are defined--> pass to dist method (try for avoid crash). 
-  if (class(ans)=="try-error") 
+  if (inherits(ans,"try-error")) 
     return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
  
   ans$call <- call
@@ -107,7 +107,7 @@ dbplsr.dist <- function(distance,y,...,weights,ncomp=ncomp,method="ncomp")
    Delta <- disttoD2(distance)     
    
    try(ans<-dbplsr.D2(D2=Delta,y=y,weights=weights,method=method,ncomp=ncomp))
-   if (class(ans)=="try-error")
+   if (inherits(ans,"try-error"))
      return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
    
    ans$call <- call
@@ -124,14 +124,14 @@ dbplsr.dist <- function(distance,y,...,weights,ncomp=ncomp,method="ncomp")
     
 dbplsr.D2 <- function(D2,y,...,weights,ncomp=ncomp,method="ncomp")
 {  
-                     
-   if (!any (class(D2)=="D2")) 
-     stop("for a dblm.D2 method the class of the distance matrix D2 must be 'D2'")
+
+	if (!inherits(D2,"D2")) 
+		stop("for a dblm.D2 method the class of the distance matrix D2 must be 'D2'")
     
-       # control method. See the auxiliar function
-   method<-control_method(method,"dblm")  
+    # control method. See the auxiliary function
+	method<-control_method(method,"dblm")  
    
-   # another program controls: See the auxiliar function
+   # another program controls: See the auxiliary function
    y <- as.matrix(y)
    n <- nrow(y)
   
@@ -171,7 +171,7 @@ dbplsr.Gram <- function(G,y,...,weights,ncomp=ncomp,method="ncomp")
    
    method <- control_method(method,"dbplsr")  
    
-   # another program controls: See the auxiliar function
+   # another program controls: See the auxiliary function
    weights <- controls_dbplsr(G,weights,ncomp,y)
    ori_weights <-weights           # originals weights !!
    weights <- weights/sum(weights) # percent weights !!   

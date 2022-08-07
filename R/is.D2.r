@@ -3,7 +3,6 @@
   ########################
 
 
- is.D2 <- function(x){
-   aux<-ifelse(class(x)=="D2",TRUE,FALSE)
-   return(aux)
- }
+is.D2 <- function(x){
+	return(inherits(x,"D2"))
+	}

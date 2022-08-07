@@ -35,7 +35,7 @@ print.ldblm<-function(x,...){
 		 
   # print the call
   cat("\ncall:   ")
-   if (class(x)[1] == "ldblm")
+   if (inherits(x,"ldblm"))
     x$call[[1]]<-as.name("ldblm")
    else
     x$call[[1]]<-as.name("ldbglm")

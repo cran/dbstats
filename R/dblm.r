@@ -27,7 +27,7 @@
     ###############################
 
      #generic function with a commun parameter (y).
- dblm <- function(...)  UseMethod("dblm")
+dblm <- function(...)  UseMethod("dblm")
  
 dblm.formula <- function(formula,data,...,metric="euclidean",method="OCV",
                     full.search=TRUE,weights,rel.gvar=0.95,eff.rank) 
@@ -47,7 +47,7 @@ dblm.formula <- function(formula,data,...,metric="euclidean",method="OCV",
   try(ans <- dblm.yz(y=zy$y,z=zy$z,metric=metric,weights=weights,
         eff.rank=eff.rank,method=method,rel.gvar=rel.gvar,full.search=full.search))  
   
-  if (class(ans)=="try-error") 
+  if (inherits(ans,"try-error")) 
     return(paste("the program failed. Try to read the help. If the error persists attempts to communicate with us "))
   
   # call dbglm
@@ -94,7 +94,7 @@ dblm.yz <- function(y,z,metric="euclidean",method="OCV",full.search=TRUE,
   # y and Distance are defined--> pass to dist method (try for avoid crash). 
   #try(ans <- dblm.dist(y,D,weights=weights,eff.rank=eff.rank,method=method,
   #           rel.gvar=rel.gvar,full_search=full_search)) 
-  if (class(ans)=="try-error") 
+  if (inherits(ans,"try-error")) 
    return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
   
   ans$call <- call
@@ -125,7 +125,7 @@ dblm.dist <- function(distance,y,...,method="OCV",full.search=TRUE,weights,
    try(ans<-dblm.D2(D2=Delta,y=y,weights=weights,eff.rank=eff.rank,
                   method=method,rel.gvar=rel.gvar,full.search=full.search))
  
-   if (class(ans)=="try-error")
+   if (inherits(ans,"try-error"))
      return(paste("the program failed. Try to read the help. If the error persists attempts to communicate with us "))
    
    ans$call <- call
@@ -171,7 +171,7 @@ dblm.D2 <- function(D2,y,...,method="OCV",full.search=TRUE,weights,
                   method=method,rel.gvar=rel.gvar,full.search=full.search))
                   
  
-   if (class(ans)=="try-error")
+   if (inherits(ans,"try-error"))
      return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
     
     ans$call<-match.call(expand.dots = FALSE)

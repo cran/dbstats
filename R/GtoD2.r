@@ -7,7 +7,7 @@
   
  GtoD2 <- function(G){
   
-  if (class(G)!="Gram")
+  if (!inherits(G,"Gram"))
    stop(" 'G' must be of class Gram")
    
   n<-ncol(G)

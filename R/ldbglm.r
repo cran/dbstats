@@ -19,45 +19,45 @@
     #### dbglm of class formula ####
     ################################
 
-     #generic function with a commun parameter (y).
- ldbglm<-function(...)  UseMethod("ldbglm")
+    #generic function with a commun parameter (y).
+	ldbglm<-function(...)  UseMethod("ldbglm")
  
- ldbglm.formula<-function(formula,data,...,family=gaussian(),kind.of.kernel=1,
+	ldbglm.formula<-function(formula,data,...,family=gaussian(),kind.of.kernel=1,
                     metric1="euclidean",metric2=metric1,
                     method.h="GCV",
                     weights,
                     user.h=NULL,h.range=NULL,noh=10,k.knn=3,
                     rel.gvar=0.95,eff.rank=NULL,maxiter=100,eps1=1e-10,
                     eps2=1e-10)
-{
-  # call dbglm
-  mf <- match.call(expand.dots = FALSE)
+	{
+	# call dbglm
+	mf <- match.call(expand.dots = FALSE)
   
-  # control metric. See the auxiliar function
-  metric1 <- control_metric(metric1)
-  metric2 <- control_metric(metric2)
+	# control metric. See the auxiliar function
+	metric1 <- control_metric(metric1)
+	metric2 <- control_metric(metric2)
   
-  if (missing(data))
+	if (missing(data))
     data <- environment(formula)
   
-  # recover z and y of the formula                            
-  if (metric1=="gower"||metric2=="gower")
-    zy <- formula_to_zy(formula,data,mf,"dblm","gower")
-  else
-    zy <- formula_to_zy(formula,data,mf,"dblm",metric1)
+	# recover z and y of the formula                            
+	if (metric1=="gower"||metric2=="gower")
+		zy <- formula_to_zy(formula,data,mf,"dblm","gower")
+	else
+		zy <- formula_to_zy(formula,data,mf,"dblm",metric1)
   
-  # y and z are defined--> pass to default method (try for avoid the program crash).
-  try(ans <- ldbglm.yz(y=zy$y,z=zy$z,family=family,kind.of.kernel=kind.of.kernel,
+	# y and z are defined--> pass to default method (try for avoid the program crash).
+	try(ans <- ldbglm.yz(y=zy$y,z=zy$z,family=family,kind.of.kernel=kind.of.kernel,
         metric1=metric1,metric2=metric2,user.h=user.h,
         h.range=h.range,noh=noh,k.knn=k.knn,method.h=method.h,weights=weights,
         rel.gvar=rel.gvar,eff.rank=eff.rank,maxiter=maxiter,eps1=eps1,eps2=eps2)) 
-  if (class(ans)[1]=="try-error")
-   return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
+	if (inherits(ans,"try-error"))
+		return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
 
-  ans$call<-mf
-  attr(ans,"zs") <- zy$zini
+	ans$call<-mf
+	attr(ans,"zs") <- zy$zini
   
-  return(ans)
+	return(ans)
 }
 
 
@@ -104,7 +104,7 @@ ldbglm.yz<-function(y,z,family=gaussian(),kind.of.kernel=1,
       method.h=method.h,weights=weights,rel.gvar=rel.gvar,eff.rank=eff.rank,maxiter=maxiter,
       eps1=eps1,eps2=eps2)) 
       
-   if (class(ans)[1]=="try-error") 
+   if (inherits(ans,"try-error")) 
     return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
  
    ans$call <- match.call(expand.dots = FALSE)
@@ -131,9 +131,9 @@ ldbglm.dist<- function(dist1,dist2=dist1,y,family=gaussian(),kind.of.kernel=1,
           rel.gvar=0.95,eff.rank=NULL,maxiter=100,eps1=1e-10,eps2=1e-10,...){
          
    # stop if class of distance matrix is not dist
-   if (!any (class(dist1)=="dist")) 
+   if (!inherits(dist1,"dist")) 
     stop("for a ldbglm.dist method the class of the distance matrix dist1 must be 'dist'")
-   if (!any (class(dist2)=="dist")) 
+   if (!inherits(dist2,"dist")) 
     stop("for a ldbglm.dist method the class of the distance matrix dist2 must be 'dist'")
    
    # dist to D2
@@ -144,7 +144,7 @@ ldbglm.dist<- function(dist1,dist2=dist1,y,family=gaussian(),kind.of.kernel=1,
           user.h=user.h,family=family,h.range=h.range,noh=noh,k.knn=k.knn,
           method.h=method.h,weights=weights,rel.gvar=rel.gvar,eff.rank=eff.rank,maxiter=maxiter,
           eps1=eps1,eps2=eps2))
-   if (class(ans)[1]=="try-error") 
+   if (inherits(ans,"try-error")) 
      return(paste("the program failed.Tries to read the help. If the error persists attempts to communicate with us "))
 
    ans$call<-match.call(expand.dots = FALSE)  
@@ -341,9 +341,9 @@ ldbglm.Gram <- function(G1,G2=G1,y,kind.of.kernel=1,user.h=NULL,
              eps2=1e-10,...){
     
    # stop if class of distance matrix is not D2      
-   if (class(G1)[1]!="Gram")
+   if (!inherits(G1,"Gram"))
     stop("for a ldbglm.Gram method.h the class of the distance matrix G1 must be 'Gram'")
-   if (class(G2)[1]!="Gram")
+   if (!inherits(G2,"Gram"))
     stop("for a ldbglm.Gram method.h the class of the distance matrix G2 must be 'Gram'")   
    
    # converts G to D2
@@ -356,7 +356,7 @@ ldbglm.Gram <- function(G1,G2=G1,y,kind.of.kernel=1,user.h=NULL,
           user.h=user.h,family=family,h.range=h.range,noh=noh,k.knn=k.knn,
           method.h=method.h,weights=weights,rel.gvar=rel.gvar,eff.rank=eff.rank,maxiter=maxiter,
           eps1=eps1,eps2=eps2))
-   if (class(ans)=="try-error")
+   if (inherits(ans,"try-error"))
     return(paste("Program failed. Try to read the help. If the error persists please communicate with us "))
    
    ans$call <- match.call(expand.dots = FALSE) 

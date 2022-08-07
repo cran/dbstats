@@ -22,8 +22,8 @@
      if (type.var!="Z"&&type.var!="D2"&&type.var!="G")
       stop("type.var must be Z for explanatory values, D2 for square distance between individuals or G for centered Euclidean configuration")
      
-     if (class(newdata)[1]=="dist"|| class(newdata)[1]=="dissimilarity")
-      newdata<-disttoD2(newdata)
+		if (inherits(newdata,"dist")||inherits(newdata,"dissimilarity"))
+			newdata<-disttoD2(newdata)
       
      # if new data have the explanatory values of the new indiviudals      
      if (type.var=="Z"){

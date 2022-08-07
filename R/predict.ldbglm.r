@@ -29,10 +29,10 @@ predict.ldbglm<-function(object,newdata1,newdata2=newdata1,new.k.knn=3,
       stop("newdata1 matrix must be defined")
      
      # transform an object of class dist to one of "D2"
-     if (class(newdata1)[1]=="dist"|| class(newdata1)[1]=="dissimilarity")
+     if (inherits(newdata1,"dist")||inherits(newdata1,"dissimilarity"))
       newdata1<-as.matrix(newdata1)^2
      
-     if (class(newdata2)[1]=="dist"|| class(newdata2)[1]=="dissimilarity")
+     if (inherits(newdata2,"dist")||inherits(newdata2,"dissimilarity"))
       newdata2<-as.matrix(newdata2)^2
       
         
