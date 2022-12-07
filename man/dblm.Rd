@@ -185,6 +185,9 @@
  }
 \references{
 
+Boj E, Caballe, A., Delicado P, Esteve, A., Fortiana J (2016). \emph{Global and local distance-based generalized linear models}.
+	TEST 25, 170-195.
+
 Boj E, Delicado P, Fortiana J (2010). \emph{Distance-based local linear regression for functional predictors}.
 	Computational Statistics and Data Analysis 54, 429-437.
 

@@ -1,3 +1,8 @@
+Version 2.0.1 [2022-12-07]
+----------------------------
+
+  o Added a reference in the help of the dblm, dbglm, ldblm and ldbglm functions
+
 Version 2.0.0 [2022-07-21]
 ----------------------------
 
