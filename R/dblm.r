@@ -44,7 +44,7 @@ dblm.formula <- function(formula,data,...,metric="euclidean",method="OCV",
   zy <- formula_to_zy(formula,data,mf,"dblm",metric)
 
   # y and z are defined--> pass to default method (try for avoid the program crash). 
-  try(ans <- dblm.yz(y=zy$y,z=zy$z,metric=metric,weights=weights,
+  try(ans <- dblmyz(y=zy$y,z=zy$z,metric=metric,weights=weights,
         eff.rank=eff.rank,method=method,rel.gvar=rel.gvar,full.search=full.search))  
   
   if (inherits(ans,"try-error")) 
@@ -63,7 +63,7 @@ dblm.formula <- function(formula,data,...,metric="euclidean",method="OCV",
     #### aux dblm (y,z) #####
     #############################
 
-dblm.yz <- function(y,z,metric="euclidean",method="OCV",full.search=TRUE,
+dblmyz <- function(y,z,metric="euclidean",method="OCV",full.search=TRUE,
                   weights,rel.gvar=0.95,eff.rank,...)
 {
 

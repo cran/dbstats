@@ -74,16 +74,15 @@
 \tabular{ll}{
 Package: \tab dbstats\cr
 Type: \tab Package\cr
-Version: \tab 2.0.1\cr
-Date: \tab 2022-12-07\cr
+Version: \tab 2.0.2\cr
+Date: \tab 2024-01-26\cr
 License: \tab 	GPL-2\cr
 LazyLoad: \tab yes\cr     
 }
 
 }
 \author{
-Boj, Eva <evaboj@ub.edu>, Caballe, Adria <adria.caballe@upc.edu>, Delicado, 
- Pedro <pedro.delicado@upc.edu> and Fortiana, Josep <fortiana@ub.edu>
+Boj, Eva <evaboj@ub.edu>, Caballe, Adria <adria.caballe@upc.edu>, Delicado, Pedro <pedro.delicado@upc.edu> and Fortiana, Josep <fortiana@ub.edu>
 
 }
 \references{

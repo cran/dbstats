@@ -30,7 +30,7 @@
   zy <- formula_to_zy(formula,data,mf,"dblm",metric)
 
   # y and z are defined--> pass to default method (try for avoid the program crash). 
-  try(ans <- dbplsr.yz(z=zy$z,y=zy$y,metric=metric,weights=weights,method=method,
+  try(ans <- dbplsryz(z=zy$z,y=zy$y,metric=metric,weights=weights,method=method,
         ncomp=ncomp))  
   
   if (inherits(ans,"try-error")) 
@@ -49,7 +49,7 @@
     #### default dbplsr (y,z) ######
     ################################
 
-dbplsr.yz <- function(y,z,metric="euclidean",weights,ncomp,method="ncomp",...)
+dbplsryz <- function(y,z,metric="euclidean",weights,ncomp,method="ncomp",...)
 {                    
  
   call <- match.call(expand.dots = FALSE)

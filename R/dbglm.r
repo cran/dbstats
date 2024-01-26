@@ -56,7 +56,7 @@
   zy <- formula_to_zy(formula,data,mf,"dbglm",metric)
   
   # y and z are defined--> pass to default method (try for avoid the program crash).
-  try(ans <- dbglm.yz(y=zy$y,z=zy$z,metric=metric,family=family, method = method, full.search =full.search,
+  try(ans <- dbglmyz(y=zy$y,z=zy$z,metric=metric,family=family, method = method, full.search =full.search,
             weights=weights,maxiter=maxiter,eps1=eps1,eps2=eps2,rel.gvar=rel.gvar,eff.rank=eff.rank,
             offset=offset,mustart=mustart,range.eff.rank=range.eff.rank))        
  
@@ -75,7 +75,7 @@
     #### default dbglm (y,z) #######
     ################################
 
-dbglm.yz <- function(y,z,family=gaussian,metric="euclidean", method ="GCV",
+dbglmyz <- function(y,z,family=gaussian,metric="euclidean", method ="GCV",
         full.search=TRUE, weights,maxiter=100,eps1=1e-10,eps2=1e-10,
         rel.gvar=0.95,eff.rank=NULL,offset = rep(0, length(y)),
         mustart=NULL, range.eff.rank,...)
@@ -274,7 +274,7 @@ dbglm.D2<-function(D2,y,...,family=gaussian, method ="GCV", full.search=TRUE, we
      { 
         for (eff.rank in range.eff.rank[1]:range.eff.rank[2])
         {
-           dbglm.aux    <- dbglm.iteration(y = y, mu = mu, weights = weights, nobs = nobs, eta = eta, Delta=Delta, method=method, 
+           dbglm.aux    <- dbglm_iteration(y = y, mu = mu, weights = weights, nobs = nobs, eta = eta, Delta=Delta, method=method, 
                                            offset = offset, n = n, eff.rank = eff.rank, rel.gvar = rel.gvar, dev.resids=dev.resids,
                                            aic=aic, mu.eta = mu.eta, valideta=valideta, validmu=validmu, family=family,
                                            variance=variance,linkinv=linkinv, problem.links=problem.links, eps1=eps1,eps2=eps2,maxiter=maxiter)
@@ -307,7 +307,7 @@ dbglm.D2<-function(D2,y,...,family=gaussian, method ="GCV", full.search=TRUE, we
                                          eps1,eps2,maxiter)
         {
        
-           dbglm.aux    <- dbglm.iteration(y = y, mu = mu, weights = weights, nobs = nobs, eta = eta, Delta=Delta, method=method, 
+           dbglm.aux    <- dbglm_iteration(y = y, mu = mu, weights = weights, nobs = nobs, eta = eta, Delta=Delta, method=method, 
                                            offset = offset, n = n, eff.rank = rk, rel.gvar = rel.gvar, dev.resids=dev.resids,
                                            aic=aic, mu.eta = mu.eta, valideta=valideta, validmu=validmu, family=family,
                                            variance=variance,linkinv=linkinv, problem.links=problem.links, eps1=eps1,eps2=eps2,maxiter=maxiter)
@@ -334,7 +334,7 @@ dbglm.D2<-function(D2,y,...,family=gaussian, method ="GCV", full.search=TRUE, we
       eff.rank  <- round(criterion.opt$minimum)
       criterion <- criterion.opt$objective
 
-      dbglm.opt    <- dbglm.iteration(y = y, mu = mu, weights = weights,  nobs = nobs, eta = eta, Delta=Delta, method=method, 
+      dbglm.opt    <- dbglm_iteration(y = y, mu = mu, weights = weights,  nobs = nobs, eta = eta, Delta=Delta, method=method, 
                                          offset = offset, n = n, eff.rank = eff.rank, rel.gvar = rel.gvar, dev.resids=dev.resids,
                                          aic=aic, mu.eta = mu.eta, valideta=valideta, validmu=validmu, family=family,
                                          variance=variance,linkinv=linkinv, problem.links=problem.links, eps1=eps1,eps2=eps2,maxiter=maxiter)
@@ -343,7 +343,7 @@ dbglm.D2<-function(D2,y,...,family=gaussian, method ="GCV", full.search=TRUE, we
    } 
    else
    {
-         dbglm.opt    <- dbglm.iteration(y = y, mu = mu, weights = weights,  nobs = nobs, eta = eta, Delta=Delta, method=method, 
+         dbglm.opt    <- dbglm_iteration(y = y, mu = mu, weights = weights,  nobs = nobs, eta = eta, Delta=Delta, method=method, 
                                          offset = offset, n = n, eff.rank = eff.rank, rel.gvar = rel.gvar, dev.resids=dev.resids,
                                          aic=aic, mu.eta = mu.eta, valideta=valideta, validmu=validmu, family=family,
                                          variance=variance,linkinv=linkinv, problem.links=problem.links, eps1=eps1,eps2=eps2,maxiter=maxiter)

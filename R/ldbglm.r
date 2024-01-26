@@ -47,7 +47,7 @@
 		zy <- formula_to_zy(formula,data,mf,"dblm",metric1)
   
 	# y and z are defined--> pass to default method (try for avoid the program crash).
-	try(ans <- ldbglm.yz(y=zy$y,z=zy$z,family=family,kind.of.kernel=kind.of.kernel,
+	try(ans <- ldbglmyz(y=zy$y,z=zy$z,family=family,kind.of.kernel=kind.of.kernel,
         metric1=metric1,metric2=metric2,user.h=user.h,
         h.range=h.range,noh=noh,k.knn=k.knn,method.h=method.h,weights=weights,
         rel.gvar=rel.gvar,eff.rank=eff.rank,maxiter=maxiter,eps1=eps1,eps2=eps2)) 
@@ -66,7 +66,7 @@
     #### default dbglm (y,z) #######
     ################################
 
-ldbglm.yz<-function(y,z,family=gaussian(),kind.of.kernel=1,
+ldbglmyz<-function(y,z,family=gaussian(),kind.of.kernel=1,
                   metric1="euclidean",metric2=metric1,method.h="GCV",weights,
                   user.h=NULL,h.range=NULL,noh=10,k.knn=3,rel.gvar=0.95,
                   eff.rank=NULL,maxiter=100,eps1=1e-10,eps2=1e-10,...)

@@ -43,7 +43,7 @@ ldblm.formula<-function(formula,data,...,kind.of.kernel=1,
     zy <- formula_to_zy(formula,data,mf,"dblm",metric1)
     
   # y and z are defined--> pass to default method (try for avoid the program crash). 
-  try(ans<-ldblm.yz(y=zy$y,z=zy$z,kind.of.kernel=kind.of.kernel,
+  try(ans<-ldblmyz(y=zy$y,z=zy$z,kind.of.kernel=kind.of.kernel,
         method.h=method.h,weights=weights,metric1=metric1,metric2=metric2,
         user.h=user.h,h.range=h.range,noh=noh,k.knn=k.knn,rel.gvar=rel.gvar,
         eff.rank=eff.rank)) 
@@ -64,7 +64,7 @@ ldblm.formula<-function(formula,data,...,kind.of.kernel=1,
     #### default dbglm (y,z) #######
     ################################
 
-ldblm.yz <- function(y,z,kind.of.kernel=1,metric1="euclidean",
+ldblmyz <- function(y,z,kind.of.kernel=1,metric1="euclidean",
         metric2=metric1,method.h="GCV",weights,user.h=NULL,h.range=NULL,
         noh=10,k.knn=3,rel.gvar=0.95,eff.rank=NULL,...)
 {

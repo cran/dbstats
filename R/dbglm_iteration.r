@@ -1,4 +1,4 @@
-dbglm.iteration <- function(y, mu, weights,  nobs, eta, Delta, method, offset, n, eff.rank = NULL, rel.gvar, dev.resids,
+dbglm_iteration <- function(y, mu, weights,  nobs, eta, Delta, method, offset, n, eff.rank = NULL, rel.gvar, dev.resids,
                                          aic, mu.eta, valideta, validmu, family,variance, linkinv, problem.links,
                                          eps1,eps2,maxiter)
 {

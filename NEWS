@@ -1,3 +1,9 @@
+Version 2.0.2 [2024-01-26]
+----------------------------
+
+  o Adapted to requirements to avoid error 'The \usage entries for S3 methods 
+    should use the \method markup and not their full name'.
+
 Version 2.0.1 [2022-12-07]
 ----------------------------
 
