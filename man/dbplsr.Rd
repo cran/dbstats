@@ -40,7 +40,7 @@
 
   \item{formula}{
       an object of class \code{\link{formula}}. A formula of the form \code{y~Z}.
-	  This argument is a remnant of the \code{\link{plsr}} function, 
+	  This argument is a remnant of the \code{\link[pls]{plsr}} function, 
 	  kept for compatibility. 
 }
  \item{data}{
@@ -54,7 +54,7 @@
 }
   \item{distance}{
       a \code{dist} or \code{dissimilarity} class object. See functions
-	  \code{\link{dist}} in the package \code{stats} and \code{\link{daisy}} 
+	  \code{\link{dist}} in the package \code{stats} and \code{\link[cluster]{daisy}} 
 	  in the package \code{cluster}.
 }
   \item{D2}{

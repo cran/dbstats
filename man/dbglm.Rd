@@ -60,7 +60,7 @@
 }
   \item{distance}{
       a \code{dist} or \code{dissimilarity} class object. See functions
-	 \code{\link{dist}} in the package \code{stats} and \code{\link{daisy}} 
+	 \code{\link{dist}} in the package \code{stats} and \code{\link[cluster]{daisy}} 
 	 in the package \code{cluster}.
 }
   \item{D2}{

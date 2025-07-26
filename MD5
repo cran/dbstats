@@ -1,6 +1,6 @@
-7fe73d05aa73a00b14aaa3bf99661a4d *DESCRIPTION
+3b3065fc0b7a6797f3ecda0f87924318 *DESCRIPTION
 5059df321e5c086cd110d71b65064704 *NAMESPACE
-becaab262990f894edf6fe4a7185fdc6 *NEWS
+a0be2be8294698b07fc362295882e74d *NEWS
 34c0de2ef29266229589e79588e4b71e *R/D2toDist.r
 eee694ec3ac0a47bacf87c97f1b679bb *R/D2toG.r
 5a414df7145aaf0a71562a43ed88462a *R/Gcalc.r
@@ -62,13 +62,13 @@ aa3ca88c87a2914950d4258546a4c0ff *man/GtoD2.rd
 d557ccfddf5947c664b4abad3ac6c867 *man/as.D2.rd
 22d5e9edd7516075a9eb5e2e739926b9 *man/as.Gram.rd
 919c0be6651335f6550b5d4e5a1b750c *man/dbglm-internal.Rd
-fd53db7c0058f6600fd78ba3051056ab *man/dbglm.Rd
+339fb65c764a1897f00fab7fd1e53568 *man/dbglm.Rd
 f3a34d5821a34885294aa8bb175cdf7f *man/dblm-internal.Rd
-fc68101284b6ea897c122344c580eb04 *man/dblm.Rd
+2d99342674f1a58e215bf124d66d63c6 *man/dblm.Rd
 ae0aa31bfee1abd0cbedf58d719972b1 *man/dbplsr-internal.Rd
-6b9950d202f814f731e8faabfb5b23ac *man/dbplsr.Rd
-6039bafc83f830c17cbee228370c9fa6 *man/dbstats-package.Rd
-6ce1546d77389b9ac82a4901d23f924a *man/disttoD2.rd
+e275547285211a46bd730719ddf9894f *man/dbplsr.Rd
+179da7fdc55d61c1fd8cc509f7883d9d *man/dbstats-package.Rd
+a879346f36c9028ceb8386597910f16c *man/disttoD2.rd
 f505c30925775d7430b231dc35266280 *man/ldbglm-internal.Rd
 ecf606453f04a6c069312b293195483a *man/ldbglm.Rd
 1346f3e9265f368f5be0c0061c86e449 *man/ldblm-internal.Rd

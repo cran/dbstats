@@ -1,3 +1,9 @@
+Version 2.0.3 [2025-07-26]
+----------------------------
+
+  o Adapted to requirements, Rd cross-references now use package anchors when linking to targets outside the package or base packages.
+
+
 Version 2.0.2 [2024-01-26]
 ----------------------------
 

@@ -58,7 +58,7 @@
 }
   \item{distance}{
       a \code{dist} or \code{dissimilarity} class object. See functions
-	  \code{\link{dist}} in the package \code{stats} and \code{\link{daisy}} 
+	  \code{\link{dist}} in the package \code{stats} and \code{\link[cluster]{daisy}} 
 	  in the package \code{cluster}.
 }
   \item{D2}{
@@ -138,7 +138,7 @@
     There are many ways to compute and calculate this matrix, besides
 	the three included as parameters in this function. 
     Several packages in R also study this problem. In particular 
-	\code{\link{dist}} in the package \code{stats} and \code{\link{daisy}}
+	\code{\link{dist}} in the package \code{stats} and \code{\link[cluster]{daisy}}
    in the package	\code{cluster} (the three metrics in \code{dblm} call
   the \code{daisy} function).
 	
